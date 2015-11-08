@@ -1,7 +1,7 @@
 #include "nc.h"
 
 void
-nc_util_print_help()
+nc_utils_print_help()
 {
   printf(
 	 "NanoChat help\n"

@@ -1,20 +1,23 @@
 #include "nc.h"
 
 void
-nc_args_get_opts(nc_opts *opts, int argc, char **argv)
+nc_param_get_opts(nc_opts *opts, int argc, char **argv)
 {
   int c;
+  opts->host[0] = '\0';
+  opts->port[0] = '\0';
+  opts->url[0] = '\0';
   opts->verbose = 0;
   opts->secure = 0;
-
-  while(1) {
+  
+  for(;;) {
     
     static struct option long_options[] = {
       {"verbose", no_argument, 0, 'v'},
       {"secure", no_argument, 0, 's'},
       {"help", no_argument, 0, 'h'},
-      {"host", required_argument, 0, 'i'},
-      {"port", required_argument, 0, 'p'},
+      {"host", required_argument, 0, 'H'},
+      {"port", required_argument, 0, 'P'},
       {0, 0, 0, 0}
     };
 
@@ -36,11 +39,11 @@ nc_args_get_opts(nc_opts *opts, int argc, char **argv)
       break;
 
     case 'h':
-      nc_util_print_help();
+      nc_utils_print_help();
       exit(0);
       
     case 'H':
-      if(strlen(optarg) > HOST_MAX) {
+      if(strlen(optarg) >= HOST_MAX) {
 	printf("error: Host is to long!\n");
 	exit(1);
       }
@@ -48,7 +51,11 @@ nc_args_get_opts(nc_opts *opts, int argc, char **argv)
       break;
 
     case 'P':
-      opts->port = strtol(optarg, NULL, 10);
+      if(strlen(optarg) >= PORT_MAX) {
+	printf("error: Port can not be more than 5 character!\n");
+	exit(1);
+      }
+      strcpy(opts->port, optarg);
       break;
 
     case '?':
@@ -56,4 +63,18 @@ nc_args_get_opts(nc_opts *opts, int argc, char **argv)
       break;
     }
   }
+
+  if(opts->host[0] == '\0') {
+    printf("error: Setting host (--host) is required!\n");
+    exit(0);
+  }
+
+  if(opts->port[0] == '\0') {
+    strcpy(opts->port, DEFAULT_DSCV_PORT);
+  }
+
+  strcat(opts->url, "tcp://");
+  strcat(opts->url, opts->host);
+  strcat(opts->url, ":");
+  strcat(opts->url, opts->port);
 }

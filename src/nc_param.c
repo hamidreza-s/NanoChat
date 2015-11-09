@@ -44,7 +44,7 @@ nc_param_get_opts(nc_opts *opts, int argc, char **argv)
       
     case 'H':
       if(strlen(optarg) >= HOST_MAX) {
-	printf("error: Host is to long!\n");
+	fprintf(stderr, "Error: Host is to long\n");
 	exit(1);
       }
       strcpy(opts->host, optarg);
@@ -52,7 +52,7 @@ nc_param_get_opts(nc_opts *opts, int argc, char **argv)
 
     case 'P':
       if(strlen(optarg) >= PORT_MAX) {
-	printf("error: Port can not be more than 5 character!\n");
+	fprintf(stderr, "Error: Port can not be more than 5 character!\n");
 	exit(1);
       }
       strcpy(opts->port, optarg);
@@ -65,7 +65,7 @@ nc_param_get_opts(nc_opts *opts, int argc, char **argv)
   }
 
   if(opts->host[0] == '\0') {
-    printf("error: Setting host (--host) is required!\n");
+    fprintf(stderr, "Error: Setting host (--host) is required!\n");
     exit(0);
   }
 

@@ -6,7 +6,7 @@ nc_disco_loop(void *void_opts)
   nc_opts *opts = (nc_opts*) void_opts;
   int sock = nn_socket(AF_SP, NN_REP);
   nn_bind(sock, opts->url);
-  printf("Discovery responder was started on URL: %s.\n", opts->url);
+  nc_log_writef("info", "Discovery responder was started on URL: %s.\n", opts->url);
   for(;;) {
     char *buf = NULL;
     int bytes = nn_recv(sock, &buf, NN_MSG, 0);

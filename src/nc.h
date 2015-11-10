@@ -19,6 +19,8 @@
 #define NOW_STR_LEN 26
 #define CONF_KEY_LEN 1024
 #define CONF_VAL_LEN 1024
+#define SCMD_NAME_LEN 32
+#define SCMD_MAX 3
 
 typedef struct nc_opts {
   char host[HOST_MAX];
@@ -33,6 +35,12 @@ typedef struct nc_conf_rec {
   char val[CONF_VAL_LEN];
 } nc_conf_rec;
 
+typedef struct nc_shell_cmd {
+  int code;
+  char name[SCMD_NAME_LEN];
+  void (*func)(void);
+} nc_shell_cmd;
+
 /* --- parameters --- */
 void nc_param_get_opts(nc_opts *opts, int argc, char **argv);
 
@@ -45,12 +53,14 @@ void nc_log_writef(const char *tag, const char *msgf, ...);
 void nc_utils_print_help();
 int nc_utils_count_char(const char *str, const char chr);
 void nc_utils_now_str(char *time_str);
+void nc_utils_del_new_line(char *str);
 
 /* --- discovery --- */
 void nc_disco_start(nc_opts *opts);
 
 /* --- shell --- */
 void nc_shell_start(nc_opts *opts);
+void nc_shell_register_cmd(char *name, void (*func)(void));
 
 /* --- config --- */
 void nc_conf_start();

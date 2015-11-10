@@ -17,16 +17,13 @@ nc_conf_get(nc_conf_rec *conf_rec)
   while(getline(&buf, &buf_size, conf_fp) != -1) {
     
     char *key_val;
-    char *new_line;
 
     if((key_val = strstr(buf, conf_rec->key)) != NULL) {
       
       strcpy(conf_rec->val, strchr(buf, '=') + 1);
       
-      if((new_line = strchr(conf_rec->val, '\n')) != NULL) {
-	*new_line = '\0';
-      }
-
+      nc_utils_del_new_line(conf_rec->val);
+      
       break;
 
     }

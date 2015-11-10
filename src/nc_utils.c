@@ -38,6 +38,17 @@ nc_utils_now_str(char *time_str)
   time_t now;
 
   time(&now);
-  strftime(time_str, NOW_STR_LEN, "%Y-%m-%d %H:%M:%S", localtime(&now));
+  strftime(time_str, NOW_STR_LEN, "%Y-%m-%d %H:%M:%S",
+	   localtime(&now));
   
+}
+
+void
+nc_utils_del_new_line(char *str)
+{
+  char *new_line;
+  
+  if((new_line = strchr(str, '\n')) != NULL) {
+    *new_line = '\0';
+  }
 }

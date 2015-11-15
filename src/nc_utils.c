@@ -52,3 +52,13 @@ nc_utils_del_new_line(char *str)
     *new_line = '\0';
   }
 }
+
+void
+nc_utils_make_url(char *url, char *host, char *port)
+{
+  url[0] = '\0';
+  strcat(url, "tcp://");
+  strcat(url, host);
+  strcat(url, ":");
+  strcat(url, port);
+}

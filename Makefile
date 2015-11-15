@@ -1,7 +1,7 @@
 CC = gcc
 
 CFLAGS += -Wall
-LDFLAGS+= -L/usr/local/lib -lpthread -lnanomsg
+LDFLAGS+= -L/usr/local/lib -I/usr/local/include -lpthread -lnanomsg
 
 OUT_EXE = nanochat
 FILES =	src/nc.c \

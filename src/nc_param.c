@@ -73,8 +73,5 @@ nc_param_get_opts(nc_opts *opts, int argc, char **argv)
     strcpy(opts->port, DEFAULT_DSCV_PORT);
   }
 
-  strcat(opts->url, "tcp://");
-  strcat(opts->url, opts->host);
-  strcat(opts->url, ":");
-  strcat(opts->url, opts->port);
+  nc_utils_make_url(opts->url, opts->host, opts->port);
 }

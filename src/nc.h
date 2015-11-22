@@ -7,6 +7,7 @@
 #include <getopt.h>
 #include <string.h>
 #include <time.h>
+#include <sys/select.h>
 #include <stdarg.h>
 #include <pthread.h>
 #include <nanomsg/nn.h>
@@ -58,6 +59,7 @@ int nc_utils_count_char(const char *str, const char chr);
 void nc_utils_now_str(char *time_str);
 void nc_utils_del_new_line(char *str);
 void nc_utils_make_url(char *url, char *host, char *port);
+int nc_utils_get_rec_sockfd(int sock);
 
 /* --- discovery --- */
 void nc_disco_start(nc_opts *opts);

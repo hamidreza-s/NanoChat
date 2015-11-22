@@ -62,3 +62,12 @@ nc_utils_make_url(char *url, char *host, char *port)
   strcat(url, ":");
   strcat(url, port);
 }
+
+int
+nc_utils_get_rec_sockfd(int sock)
+{
+  int rcvfd;
+  size_t rcvfd_sz = sizeof(rcvfd);
+  nn_getsockopt(sock, NN_SOL_SOCKET, NN_RCVFD, &rcvfd, &rcvfd_sz);
+  return rcvfd;
+}

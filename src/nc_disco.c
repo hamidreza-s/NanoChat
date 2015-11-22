@@ -12,7 +12,9 @@ nc_disco_loop(void *void_opts)
     char *buf = NULL;
     int bytes = nn_recv(sock, &buf, NN_MSG, 0);
     
-    if(strcmp(buf, "0") == 0) {
+    nc_log_writef("info", "Incoming discovery request: %s\n", buf);
+
+    if(strcmp(buf, "01") == 0) {
 
       /* one to one chat */
       
@@ -28,8 +30,11 @@ nc_disco_loop(void *void_opts)
       nc_log_writef("info", "New oto chat was connected on URL: %s.\n", otoc_url);
       nn_send(sock, otoc_port, (int) strlen(otoc_port), 0);
 
-      fprintf(stdout, "[Notification]: new one to one chat (room code: %d).\n", otoc_sock);
-      
+      fprintf(stdout, 
+	      "[Notification]: Incoming one to one chat (room code %d).\n>> ",
+	      otoc_sock);
+      fflush(stdout);
+
     } else {
 
       /* unknown command */

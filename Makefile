@@ -23,3 +23,6 @@ config:
 	@rm -f ./var/nanochat.conf
 	@echo "log_file=./var/nanochat.log" >> ./var/nanochat.conf
 	@echo "foo=bar" >> ./var/nanochat.conf
+
+live: build
+	./$(OUT_EXE) --host 127.0.0.1

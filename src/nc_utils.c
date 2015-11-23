@@ -53,6 +53,19 @@ nc_utils_del_new_line(char *str)
   }
 }
 
+int
+nc_utils_has_new_line(char *str)
+{
+  char *new_line = NULL;
+
+  if((new_line = strchr(str, '\n')) == NULL) {
+    return 0;
+  }
+
+  return 1;
+
+}
+
 void
 nc_utils_make_url(char *url, char *host, char *port)
 {
@@ -70,4 +83,10 @@ nc_utils_get_rec_sockfd(int sock)
   size_t rcvfd_sz = sizeof(rcvfd);
   nn_getsockopt(sock, NN_SOL_SOCKET, NN_RCVFD, &rcvfd, &rcvfd_sz);
   return rcvfd;
+}
+
+void
+nc_utils_empty_string(char *str)
+{
+  memset(str, '\0', strlen(str));
 }

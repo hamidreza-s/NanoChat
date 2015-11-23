@@ -100,16 +100,7 @@ void
 func_cmd_attach(char *cmd)
 {
   int pair_raw_sock;
-  int pair_fd_sock;
-  int shell_fd_sock;
   int rc;
-
-  fd_set readfds;
-  int maxfds;
-
-  char time_str[NOW_STR_LEN];
-
-  enum {sent, received, none} last_action = none;
 
   rc = sscanf(cmd, "/attach %d", &pair_raw_sock);
 
@@ -120,102 +111,53 @@ func_cmd_attach(char *cmd)
   nc_log_writef("info", "Attached to room code: %d\n", pair_raw_sock);
 
   current_room_sock = pair_raw_sock;
-
-  shell_fd_sock = 1;
-  pair_fd_sock = nc_utils_get_rec_sockfd(pair_raw_sock);
-  maxfds = pair_fd_sock + 1;
-
-  for(;;) {
-
-    switch(last_action) {
-    case none: 
-      fprintf(stdout, ">> Entering (room code %d) ...\n", pair_raw_sock);
-      fprintf(stdout, ">>> ");
-      fflush(stdout); 
-      break;
-    case received: 
-      fprintf(stdout, ">>> ");
-      fflush(stdout); 
-      break;
-    case sent: 
-      fprintf(stdout, ">>> "); 
-      fflush(stdout); 
-      break;
-    }
-
-    FD_ZERO(&readfds);
-    FD_SET(pair_fd_sock, &readfds);
-    FD_SET(shell_fd_sock, &readfds);
-
-    select(maxfds, &readfds, NULL, NULL, NULL);
-
-    if(FD_ISSET(shell_fd_sock, &readfds)) {      
-
-      char *buf = NULL;
-      size_t buf_sz = 1024;
-
-      nc_utils_now_str(time_str);      
-      getline(&buf, &buf_sz, stdin);
-
-      if(buf[0] != '\n') {
-	nn_send(pair_raw_sock, buf, strlen(buf), 0);
-	fprintf(stdout, "[%s] >>> %s", time_str, buf);
-	fflush(stdout);
-	nc_log_writef("debug", "sent: %s", buf);
-      }
-
-      /* 
-	 @TODO: 
-	 close socket and break shell if
-	 user types /leave
-      */
-
-      last_action = sent;
-
-    } else if(FD_ISSET(pair_fd_sock, &readfds)) {
-
-      char *buf = NULL;
-
-      nc_utils_now_str(time_str);
-      nn_recv(pair_raw_sock, &buf, NN_MSG, 0);
-      fprintf(stdout, "\r[%s] <<< %s\n", time_str, buf);
-      fflush(stdout);
-      nc_log_writef("debug", "received: %s\n", buf);
-      nn_freemsg(buf);
-      last_action = received;
-    }
-
-  }
+  nc_otoc_start(pair_raw_sock);
 }
 
 void
 func_cmd_connect(char *cmd)
 {
-  char host[HOST_MAX];
-  char port[PORT_MAX];
-  char url[URL_MAX];
-  int rc;  
+  char host_req[HOST_MAX];
+  char port_req[PORT_MAX];
+  char url_req[URL_MAX];
 
-  rc = sscanf(cmd, "connect %s %s", host, port);
+  char host_pair[HOST_MAX];
+  char port_pair[PORT_MAX];
+  char url_pair[URL_MAX];
+
+  int rc;  
+  char *buf = NULL;
+  int sock_req;
+  int sock_pair;
+
+  rc = sscanf(cmd, "/connect %s %s", host_req, port_req);
 
   if(rc != 2) {
     printf("Error: correct format is 'connect host port'.\n");
     return;
   }
 
-  /*
-    @TODO:
-    connect to discovery of remote peer node and offer
-    a port number, if remote peer accepts the port, it must
-    bind to that port and in response tells you it.
-    then you must connect to that port.
-   */
+  nc_utils_make_url(url_req, host_req, port_req);
+
+  nc_log_writef("info", "One to one chat request to %s was issued.", url_req);
+
+  sock_req = nn_socket(AF_SP, NN_REQ);
+  nn_connect(sock_req, url_req);
+  nn_send(sock_req, DCMD_OTOC, DCMD_LEN, 0);
+  nn_recv(sock_req, &buf, NN_MSG, 0);
+  nn_shutdown(sock_req, 0);
+
+  strcpy(host_pair, host_req);
+  strcpy(port_pair, buf);
+  nn_freemsg(buf);
+
+  nc_utils_make_url(url_pair, host_pair, port_pair);
+
+  nc_log_writef("info", "One to one chat request was handshaked in %s.", url_pair);
+
+  sock_pair = nn_socket(AF_SP, NN_PAIR);
+  nn_connect(sock_pair, url_pair);
   
-  strcpy(url, "tcp://");
-  strcat(url, host);
-  strcat(url, ":");
-  strcat(url, port);
-  
-  printf("it will be conneted to host: %s\n",
-	 url);
+  current_room_sock = sock_pair;
+  nc_otoc_start(sock_pair);
 }

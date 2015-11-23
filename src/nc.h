@@ -23,8 +23,14 @@
 #define NOW_STR_LEN 26
 #define CONF_KEY_LEN 1024
 #define CONF_VAL_LEN 1024
+
+/* shell commands */
 #define SCMD_NAME_LEN 32
 #define SCMD_MAX 10
+
+/* discovery commands */
+#define DCMD_LEN 2
+#define DCMD_OTOC "01"
 
 typedef struct nc_opts {
   char host[HOST_MAX];
@@ -58,8 +64,10 @@ void nc_utils_print_help();
 int nc_utils_count_char(const char *str, const char chr);
 void nc_utils_now_str(char *time_str);
 void nc_utils_del_new_line(char *str);
+int nc_utils_has_new_line(char *str);
 void nc_utils_make_url(char *url, char *host, char *port);
 int nc_utils_get_rec_sockfd(int sock);
+void nc_utils_empty_string(char *str);
 
 /* --- discovery --- */
 void nc_disco_start(nc_opts *opts);
@@ -67,6 +75,9 @@ void nc_disco_start(nc_opts *opts);
 /* --- shell --- */
 void nc_shell_start(nc_opts *opts);
 void nc_shell_register_cmd(char *name, void (*func)(char* cmd));
+
+/* --- one to one chat --- */
+void nc_otoc_start(int pair_raw_sock);
 
 /* --- config --- */
 void nc_conf_start();

@@ -11,10 +11,13 @@ nc_disco_loop(void *void_opts)
   for(;;) {
     char *buf = NULL;
     int bytes = nn_recv(sock, &buf, NN_MSG, 0);
+    int cmp_rc;
     
     nc_log_writef("info", "Incoming discovery request: %s\n", buf);
 
-    if(strcmp(buf, "01") == 0) {
+    cmp_rc = strcmp(buf, DCMD_OTOC);
+
+    if(cmp_rc == 0 && bytes == DCMD_LEN) {
 
       /* one to one chat */
       
@@ -42,7 +45,7 @@ nc_disco_loop(void *void_opts)
       nn_send(sock, buf, bytes, 0);
     }
 
-
+    nc_utils_empty_string(buf);
     nn_freemsg(buf);
   }
   return NULL;

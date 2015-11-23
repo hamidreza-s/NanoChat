@@ -9,6 +9,7 @@ FILES =	src/nc.c \
 	src/nc_utils.c \
 	src/nc_disco.c \
 	src/nc_shell.c \
+	src/nc_otoc.c \
 	src/nc_conf.c \
 	src/nc_log.c
 
@@ -24,5 +25,8 @@ config:
 	@echo "log_file=./var/nanochat.log" >> ./var/nanochat.conf
 	@echo "foo=bar" >> ./var/nanochat.conf
 
-live: build
-	./$(OUT_EXE) --host 127.0.0.1
+local_live_1: build
+	./$(OUT_EXE) --host 127.0.0.1 --port 1881
+
+local_live_2: build
+	./$(OUT_EXE) --host 127.0.0.1 --port 1882

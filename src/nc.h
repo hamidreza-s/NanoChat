@@ -28,6 +28,10 @@
 #define SCMD_NAME_LEN 32
 #define SCMD_MAX 10
 
+/* otoc shell commands */
+#define OCMD_NAME_LEN 32
+#define OCMD_MAX 10
+
 /* discovery commands */
 #define DCMD_LEN 2
 #define DCMD_OTOC "01"
@@ -48,8 +52,14 @@ typedef struct nc_conf_rec {
 typedef struct nc_shell_cmd {
   int code;
   char name[SCMD_NAME_LEN];
-  void (*func)(char *cmd);
+  int (*func)(char *cmd);
 } nc_shell_cmd;
+
+typedef struct nc_otoc_cmd {
+  int code;
+  char name[OCMD_NAME_LEN];
+  int (*func)(char *cmd);
+} nc_otoc_cmd;
 
 /* --- parameters --- */
 void nc_param_get_opts(nc_opts *opts, int argc, char **argv);
@@ -74,10 +84,11 @@ void nc_disco_start(nc_opts *opts);
 
 /* --- shell --- */
 void nc_shell_start(nc_opts *opts);
-void nc_shell_register_cmd(char *name, void (*func)(char* cmd));
+void nc_shell_register_cmd(char *name, int (*func)(char *cmd));
 
 /* --- one to one chat --- */
 void nc_otoc_start(int pair_raw_sock);
+void nc_otoc_register_cmd(char *name, int (*func)(char *cmd));
 
 /* --- config --- */
 void nc_conf_start();

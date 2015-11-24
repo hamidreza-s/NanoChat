@@ -4,11 +4,11 @@ static nc_shell_cmd cmds[SCMD_MAX];
 static int cmd_current_code = 0;
 static int current_room_sock;
 
-void func_cmd_help(char *cmd);
-void func_cmd_ping(char *cmd);
-void func_cmd_quit(char *cmd);
-void func_cmd_connect(char *cmd);
-void func_cmd_attach(char *cmd);
+static int func_cmd_help(char *cmd);
+static int func_cmd_ping(char *cmd);
+static int func_cmd_quit(char *cmd);
+static int func_cmd_connect(char *cmd);
+static int func_cmd_attach(char *cmd);
 
 void
 nc_shell_start(nc_opts *opts)
@@ -45,7 +45,11 @@ nc_shell_start(nc_opts *opts)
       for(i = 0; i < cmd_current_code; i++) {
 	
 	if(strstr(buf, cmds[i].name)) {
-	  cmds[i].func(buf);
+	  
+	  if(cmds[i].func(buf) < 0) {
+	    return;
+	  }
+	  
 	  found = 1;
 	  break;
 	}
@@ -62,7 +66,7 @@ nc_shell_start(nc_opts *opts)
 }
 
 void
-nc_shell_register_cmd(char *cmd_name, void (*func)(char *cmd))
+nc_shell_register_cmd(char *cmd_name, int (*func)(char *cmd))
 {
   cmds[cmd_current_code].code = cmd_current_code;
   cmds[cmd_current_code].func = func;
@@ -71,7 +75,7 @@ nc_shell_register_cmd(char *cmd_name, void (*func)(char *cmd))
   cmd_current_code++;
 }
 
-void
+int
 func_cmd_help(char *cmd)
 {
   printf("Available commands:\n"
@@ -81,22 +85,25 @@ func_cmd_help(char *cmd)
 	 "  /connect host port   connect to remote client\n"
 	 "  /attach room         attach to room\n"
 	 );
+
+  return 0;
 }
 
-void
+int
 func_cmd_ping(char *cmd)
 {
   printf("pong\n");
+  return 0;
 }
 
-void
+int
 func_cmd_quit(char *cmd)
 {
   printf("Bye!\n");
-  exit(0);
+  return -1;
 }
 
-void
+int
 func_cmd_attach(char *cmd)
 {
   int pair_raw_sock;
@@ -112,9 +119,11 @@ func_cmd_attach(char *cmd)
 
   current_room_sock = pair_raw_sock;
   nc_otoc_start(pair_raw_sock);
+
+  return 0;
 }
 
-void
+int
 func_cmd_connect(char *cmd)
 {
   char host_req[HOST_MAX];
@@ -134,7 +143,7 @@ func_cmd_connect(char *cmd)
 
   if(rc != 2) {
     printf("Error: correct format is 'connect host port'.\n");
-    return;
+    return 1;
   }
 
   nc_utils_make_url(url_req, host_req, port_req);
@@ -160,4 +169,6 @@ func_cmd_connect(char *cmd)
   
   current_room_sock = sock_pair;
   nc_otoc_start(sock_pair);
+
+  return 0;
 }

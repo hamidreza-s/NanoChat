@@ -90,3 +90,10 @@ nc_utils_empty_string(char *str)
 {
   memset(str, '\0', strlen(str));
 }
+
+void
+nc_utils_die(char *str)
+{
+  perror(str);
+  exit(1);
+}

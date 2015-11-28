@@ -10,11 +10,16 @@
 #include <sys/select.h>
 #include <stdarg.h>
 #include <pthread.h>
+
+#include <sys/socket.h>
+#include <arpa/inet.h>
+
 #include <nanomsg/nn.h>
 #include <nanomsg/reqrep.h>
 #include <nanomsg/pair.h>
 
-#define DEFAULT_DSCV_PORT "1881"
+#define DEFAULT_DISCO_PORT "1881"
+#define DEFAULT_RPC_PORT "1882"
 #define INIT_OTOC_PORT 1991
 
 #define HOST_MAX 20
@@ -32,9 +37,12 @@
 #define OCMD_NAME_LEN 32
 #define OCMD_MAX 10
 
-/* discovery commands */
+/* discovery */
 #define DCMD_LEN 2
-#define DCMD_OTOC "01"
+
+/* rpc commands */
+#define RCMD_LEN 2
+#define RCMD_OTOC "01"
 
 typedef struct nc_opts {
   char host[HOST_MAX];
@@ -78,9 +86,13 @@ int nc_utils_has_new_line(char *str);
 void nc_utils_make_url(char *url, char *host, char *port);
 int nc_utils_get_rec_sockfd(int sock);
 void nc_utils_empty_string(char *str);
+void nc_utils_die(char *str);
 
-/* --- discovery --- */
+/* --- disco --- */
 void nc_disco_start(nc_opts *opts);
+
+/* --- rpc --- */
+void nc_rpc_start(nc_opts *opts);
 
 /* --- shell --- */
 void nc_shell_start(nc_opts *opts);

@@ -152,7 +152,7 @@ func_cmd_connect(char *cmd)
 
   sock_req = nn_socket(AF_SP, NN_REQ);
   nn_connect(sock_req, url_req);
-  nn_send(sock_req, DCMD_OTOC, DCMD_LEN, 0);
+  nn_send(sock_req, RCMD_OTOC, RCMD_LEN, 0);
   nn_recv(sock_req, &buf, NN_MSG, 0);
   nn_shutdown(sock_req, 0);
 

@@ -70,7 +70,7 @@ nc_param_get_opts(nc_opts *opts, int argc, char **argv)
   }
 
   if(opts->port[0] == '\0') {
-    strcpy(opts->port, DEFAULT_DSCV_PORT);
+    strcpy(opts->port, DEFAULT_RPC_PORT);
   }
 
   nc_utils_make_url(opts->url, opts->host, opts->port);

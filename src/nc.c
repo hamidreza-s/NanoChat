@@ -12,6 +12,7 @@ main(int argc, char **argv)
   nc_param_get_opts(&opts, argc, argv);
 
   nc_disco_start(&opts);
+  nc_rpc_start(&opts);
   nc_shell_start(&opts);
 
   return 0;

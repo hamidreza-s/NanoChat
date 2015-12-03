@@ -9,6 +9,7 @@ static int func_cmd_ping(char *cmd);
 static int func_cmd_quit(char *cmd);
 static int func_cmd_connect(char *cmd);
 static int func_cmd_attach(char *cmd);
+static int func_cmd_list(char *cmd);
 
 void
 nc_shell_start(nc_opts *opts)
@@ -21,6 +22,7 @@ nc_shell_start(nc_opts *opts)
   nc_shell_register_cmd("/quit", func_cmd_quit);
   nc_shell_register_cmd("/connect", func_cmd_connect);
   nc_shell_register_cmd("/attach", func_cmd_attach);
+  nc_shell_register_cmd("/list", func_cmd_list);
   /* --- end of shell command registration --- */
   
   for(;;) {
@@ -170,5 +172,12 @@ func_cmd_connect(char *cmd)
   current_room_sock = sock_pair;
   nc_otoc_start(sock_pair);
 
+  return 0;
+}
+
+int
+func_cmd_list(char *cmd)
+{
+  printf("it will list available nodes!\n");
   return 0;
 }

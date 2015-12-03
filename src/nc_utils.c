@@ -39,8 +39,7 @@ nc_utils_now_str(char *time_str)
 
   time(&now);
   strftime(time_str, NOW_STR_LEN, "%Y-%m-%d %H:%M:%S",
-	   localtime(&now));
-  
+	   localtime(&now));  
 }
 
 void
@@ -63,7 +62,6 @@ nc_utils_has_new_line(char *str)
   }
 
   return 1;
-
 }
 
 void
@@ -97,3 +95,4 @@ nc_utils_die(char *str)
   perror(str);
   exit(1);
 }
+

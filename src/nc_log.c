@@ -24,10 +24,7 @@ void
 nc_do_log_writef(const char *tag, const char *msgf, va_list vargs)
 {
   vfprintf(log_fp, msgf, vargs);
-  
-  if(nc_utils_has_new_line((char*) msgf) == 0)
-     fprintf(log_fp, "\n");
-
+  fprintf(log_fp, "\n");
   fflush(log_fp);
   va_end(vargs);
 }

@@ -18,8 +18,8 @@
 #include <nanomsg/reqrep.h>
 #include <nanomsg/pair.h>
 
-#define DEFAULT_DISCO_PORT "1881"
-#define DEFAULT_RPC_PORT "1882"
+#define DISCO_PORT "1881" /* not changable */
+#define DEFAULT_RPC_PORT "1991"
 #define INIT_OTOC_PORT 1991
 
 #define HOST_MAX 20
@@ -38,7 +38,10 @@
 #define OCMD_MAX 10
 
 /* discovery */
-#define DCMD_LEN 2
+#define DCMD_LEN 8
+#define DCMD_CODE_LEN 2
+#define DCMD_PROB_REQUEST_CODE "01"
+#define DCMD_PROB_RESPONSE_CODE "02"
 
 /* rpc commands */
 #define RCMD_LEN 2
@@ -46,7 +49,7 @@
 
 typedef struct nc_opts {
   char host[HOST_MAX];
-  char port[PORT_MAX];
+  char port[PORT_MAX]; /* RPC port */
   char url[URL_MAX];
   int secure;
   int verbose;

@@ -28,7 +28,7 @@ config:
 	@echo "foo=bar" >> ./var/nanochat.conf
 
 local_live_1: build
-	./$(OUT_EXE) --host 127.0.0.1 --port 1991
+	./$(OUT_EXE) --host 127.0.0.1 --broadcast 127.0.0.1 --port 1991
 
 local_live_2: build
-	./$(OUT_EXE) --host 127.0.0.1 --port 1992
+	./$(OUT_EXE) --host 127.0.0.1 --broadcast 127.0.0.1 --port 1992

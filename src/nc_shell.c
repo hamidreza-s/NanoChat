@@ -4,12 +4,13 @@ static nc_shell_cmd cmds[SCMD_MAX];
 static int cmd_current_code = 0;
 static int current_room_sock;
 
-static int func_cmd_help(char *cmd);
-static int func_cmd_ping(char *cmd);
-static int func_cmd_quit(char *cmd);
-static int func_cmd_connect(char *cmd);
-static int func_cmd_attach(char *cmd);
-static int func_cmd_list(char *cmd);
+static int func_cmd_help(char *cmd, nc_opts *opts);
+static int func_cmd_ping(char *cmd, nc_opts *opts);
+static int func_cmd_quit(char *cmd, nc_opts *opts);
+static int func_cmd_connect(char *cmd, nc_opts *opts);
+static int func_cmd_attach(char *cmd, nc_opts *opts);
+static int func_cmd_probe(char *cmd, nc_opts *opts);
+static int func_cmd_list(char *cmd, nc_opts *otps);
 
 void
 nc_shell_start(nc_opts *opts)
@@ -22,6 +23,7 @@ nc_shell_start(nc_opts *opts)
   nc_shell_register_cmd("/quit", func_cmd_quit);
   nc_shell_register_cmd("/connect", func_cmd_connect);
   nc_shell_register_cmd("/attach", func_cmd_attach);
+  nc_shell_register_cmd("/probe", func_cmd_probe);
   nc_shell_register_cmd("/list", func_cmd_list);
   /* --- end of shell command registration --- */
   
@@ -48,7 +50,7 @@ nc_shell_start(nc_opts *opts)
 	
 	if(strstr(buf, cmds[i].name)) {
 	  
-	  if(cmds[i].func(buf) < 0) {
+	  if(cmds[i].func(buf, opts) < 0) {
 	    return;
 	  }
 	  
@@ -68,7 +70,7 @@ nc_shell_start(nc_opts *opts)
 }
 
 void
-nc_shell_register_cmd(char *cmd_name, int (*func)(char *cmd))
+nc_shell_register_cmd(char *cmd_name, int (*func)(char *cmd, nc_opts *opts))
 {
   cmds[cmd_current_code].code = cmd_current_code;
   cmds[cmd_current_code].func = func;
@@ -78,7 +80,7 @@ nc_shell_register_cmd(char *cmd_name, int (*func)(char *cmd))
 }
 
 int
-func_cmd_help(char *cmd)
+func_cmd_help(char *cmd, nc_opts *otps)
 {
   printf("Available commands:\n"
 	 "  /help                prints this text\n"
@@ -87,27 +89,28 @@ func_cmd_help(char *cmd)
 	 "  /connect host port   connect to remote client\n"
 	 "  /attach room         attach to room\n"
 	 "  /probe               find available peers\n"
+	 "  /list                list available peers\n"
 	 );
 
   return 0;
 }
 
 int
-func_cmd_ping(char *cmd)
+func_cmd_ping(char *cmd, nc_opts *opts)
 {
   printf("pong\n");
   return 0;
 }
 
 int
-func_cmd_quit(char *cmd)
+func_cmd_quit(char *cmd, nc_opts *opts)
 {
   printf("Bye!\n");
   return -1;
 }
 
 int
-func_cmd_attach(char *cmd)
+func_cmd_attach(char *cmd, nc_opts *opts)
 {
   int pair_raw_sock;
   int rc;
@@ -127,7 +130,7 @@ func_cmd_attach(char *cmd)
 }
 
 int
-func_cmd_connect(char *cmd)
+func_cmd_connect(char *cmd, nc_opts *opts)
 {
   char host_req[HOST_MAX];
   char port_req[PORT_MAX];
@@ -177,8 +180,26 @@ func_cmd_connect(char *cmd)
 }
 
 int
-func_cmd_list(char *cmd)
+func_cmd_probe(char *cmd, nc_opts *opts)
 {
-  printf("it will list available nodes!\n");
+  int rc;
+  
+  nc_log_writef("info", "User requested probe command.");
+  fprintf(stdout, "Starting to probing ...\n");
+
+  rc = nc_disco_probe(opts);
+  if(rc < 1) {
+    fprintf(stdout, "Ops, cannot find any peer!\n");
+  } else {
+    fprintf(stdout, "Yay, found %d peers. type '/list' to see them!\n", rc);
+  }
+  
+  return 0;
+}
+
+int
+func_cmd_list(char *cmd, nc_opts *opts)
+{
+  printf("it will list available peers!\n");
   return 0;
 }

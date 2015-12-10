@@ -65,7 +65,7 @@ typedef struct nc_conf_rec {
 typedef struct nc_shell_cmd {
   int code;
   char name[SCMD_NAME_LEN];
-  int (*func)(char *cmd);
+  int (*func)(char *cmd, nc_opts *opts);
 } nc_shell_cmd;
 
 typedef struct nc_otoc_cmd {
@@ -95,13 +95,14 @@ void nc_utils_die(char *str);
 
 /* --- disco --- */
 void nc_disco_start(nc_opts *opts);
+int nc_disco_probe(nc_opts *opts);
 
 /* --- rpc --- */
 void nc_rpc_start(nc_opts *opts);
 
 /* --- shell --- */
 void nc_shell_start(nc_opts *opts);
-void nc_shell_register_cmd(char *name, int (*func)(char *cmd));
+void nc_shell_register_cmd(char *name, int (*func)(char *cmd, nc_opts *opts));
 
 /* --- one to one chat --- */
 void nc_otoc_start(int pair_raw_sock);

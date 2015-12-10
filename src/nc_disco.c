@@ -56,11 +56,18 @@ nc_disco_loop(void *opts)
   }
 }
 
-void
-nc_disco_probe()
+int
+nc_disco_probe(nc_opts *opts)
 {
-  /* @TODO: implement it */
-  /* @TODO: find broadcast addrees with getifaddr() */
+
+  /* @TODO:
+     - send broadcast request to find available peers
+     - wait to receive response from peers
+     - save them somewhere
+     - return with the count of available peers
+  */
+  
+  return 0;
 }
 
 void

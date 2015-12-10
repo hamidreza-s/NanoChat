@@ -59,9 +59,8 @@ nc_disco_loop(void *opts)
 void
 nc_disco_prob()
 {
-  /*
-    @TODO: implement it
-   */
+  /* @TODO: implement it */
+  /* @TODO: find broadcast addrees with getifaddr() */
 }
 
 void

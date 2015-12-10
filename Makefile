@@ -6,6 +6,7 @@ LDFLAGS+= -L/usr/local/lib -I/usr/local/include -lpthread -lnanomsg
 OUT_EXE = nanochat
 FILES =	src/nc.c \
 	src/nc_param.c \
+   src/nc_netif.c \
 	src/nc_utils.c \
 	src/nc_disco.c \
 	src/nc_rpc.c \

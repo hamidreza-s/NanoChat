@@ -13,6 +13,7 @@
 
 #include <sys/socket.h>
 #include <arpa/inet.h>
+#include <ifaddrs.h>
 
 #include <nanomsg/nn.h>
 #include <nanomsg/reqrep.h>
@@ -72,6 +73,11 @@ typedef struct nc_otoc_cmd {
   int (*func)(char *cmd);
 } nc_otoc_cmd;
 
+typedef struct nc_netif_addrs {
+  char inet[HOST_MAX];
+  char broadcast[HOST_MAX];
+} nc_netif_addrs;
+
 /* --- parameters --- */
 void nc_param_get_opts(nc_opts *opts, int argc, char **argv);
 
@@ -108,5 +114,8 @@ void nc_otoc_register_cmd(char *name, int (*func)(char *cmd));
 /* --- config --- */
 void nc_conf_start();
 void nc_conf_get(nc_conf_rec *conf_rec);
+
+/* --- network interfaces --- */
+int nc_netif_get_addrs(nc_netif_addrs *netif_addrs);
 
 #endif

@@ -86,6 +86,7 @@ func_cmd_help(char *cmd)
 	 "  /quit                quit nanochat console\n"
 	 "  /connect host port   connect to remote client\n"
 	 "  /attach room         attach to room\n"
+	 "  /probe               find available peers\n"
 	 );
 
   return 0;

@@ -1,7 +1,7 @@
 #include "nc.h"
 
 int
-nc_netif_get_addrs(nc_netif_addrs *netif_addrs)
+nc_netif_get_addrs(char *inet, char *broadcast)
 {
   struct ifaddrs *ifap, *ifa;
   struct sockaddr_in *sa;
@@ -18,8 +18,8 @@ nc_netif_get_addrs(nc_netif_addrs *netif_addrs)
       if((strncmp(ifa->ifa_name, "en0", 3) == 0) ||
 	 (strncmp(ifa->ifa_name, "eth0", 4) == 0)) {
 	
-	strcpy(netif_addrs->inet, inet_ntoa(sa->sin_addr));
-	strcpy(netif_addrs->broadcast, inet_ntoa(bc->sin_addr));
+	strcpy(inet, inet_ntoa(sa->sin_addr));
+	strcpy(broadcast, inet_ntoa(bc->sin_addr));
 	
 	freeifaddrs(ifap);
 	return 0;

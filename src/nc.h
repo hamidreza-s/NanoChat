@@ -50,6 +50,7 @@
 
 typedef struct nc_opts {
   char host[HOST_MAX];
+  char broadcast[HOST_MAX];
   char port[PORT_MAX]; /* RPC port */
   char url[URL_MAX];
   int secure;
@@ -72,11 +73,6 @@ typedef struct nc_otoc_cmd {
   char name[OCMD_NAME_LEN];
   int (*func)(char *cmd);
 } nc_otoc_cmd;
-
-typedef struct nc_netif_addrs {
-  char inet[HOST_MAX];
-  char broadcast[HOST_MAX];
-} nc_netif_addrs;
 
 /* --- parameters --- */
 void nc_param_get_opts(nc_opts *opts, int argc, char **argv);
@@ -116,6 +112,6 @@ void nc_conf_start();
 void nc_conf_get(nc_conf_rec *conf_rec);
 
 /* --- network interfaces --- */
-int nc_netif_get_addrs(nc_netif_addrs *netif_addrs);
+int nc_netif_get_addrs(char *inet, char *broadcast);
 
 #endif

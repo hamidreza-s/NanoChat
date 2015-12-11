@@ -41,6 +41,7 @@
 /* discovery */
 #define DCMD_LEN 8
 #define DCMD_CODE_LEN 2
+#define DCMD_PROBE_ACK_CODE "00"
 #define DCMD_PROBE_REQUEST_CODE "01"
 #define DCMD_PROBE_RESPONSE_CODE "02"
 #define DCMD_PROBE_TIMEOUT_SEC 5 
@@ -115,5 +116,8 @@ void nc_conf_get(nc_conf_rec *conf_rec);
 
 /* --- network interfaces --- */
 int nc_netif_get_addrs(char *inet, char *broadcast);
+
+/* --- udp --- */
+int nc_udp_send(char *ip, char *port, char *body, int broadcast);
 
 #endif

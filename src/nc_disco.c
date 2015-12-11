@@ -59,39 +59,8 @@ nc_disco_loop(void *opts)
 int
 nc_disco_probe(nc_opts *opts)
 {
-  int sock;
-  struct sockaddr_in broadcast_addr;
-  char *broadcast_ip;
-  unsigned short broadcast_port;
-  char *send_str = DCMD_PROBE_REQUEST_CODE;
-  int broadcast_permission;
-  unsigned int send_str_len;
-
-  broadcast_ip = opts->broadcast;
-  broadcast_port = atoi(DISCO_PORT);
-  
-  if((sock = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0)
-    return 1;
-
-  broadcast_permission = 1;
-  if(setsockopt(sock, SOL_SOCKET, SO_BROADCAST,
-		(void *) &broadcast_permission,
-		sizeof(broadcast_permission)) < 0)
-    return 2;
-
-  memset(&broadcast_addr, 0, sizeof(broadcast_addr));
-  broadcast_addr.sin_family = AF_INET;
-  broadcast_addr.sin_addr.s_addr = inet_addr(broadcast_ip);
-  broadcast_addr.sin_port = htons(broadcast_port);
-
-  send_str_len = strlen(send_str);
-
-  if(sendto(sock, send_str, send_str_len, 0,
-	    (struct sockaddr *) &broadcast_addr,
-	    sizeof(broadcast_addr)) != send_str_len)
-    return 3;
-
-  return 0;
+  return nc_udp_send(opts->broadcast, DISCO_PORT,
+		     DCMD_PROBE_REQUEST_CODE, 1);
 }
 
 void
@@ -104,9 +73,10 @@ nc_disco_start(nc_opts *opts)
 void
 handle_request(int sock, struct sockaddr_in sock_remote_addr,
 	       char *body, char *remote_addr, int remote_port,
-	       nc_opts *nc_opts)
+	       nc_opts *opts)
 {
   char *body_payload;
+
   int response_len = DCMD_CODE_LEN + PORT_MAX;
   char response[response_len];
   
@@ -116,11 +86,16 @@ handle_request(int sock, struct sockaddr_in sock_remote_addr,
     /* send RPC port as response */
     body_payload = body + DCMD_CODE_LEN;
     strcpy(response, DCMD_PROBE_RESPONSE_CODE);
-    strcat(response, nc_opts->port);
+    strcat(response, opts->port);
     nc_log_writef("info", "Incoming discovery (UDP) request. code: %s, body: %s",
 		  DCMD_PROBE_REQUEST_CODE, body_payload);
 
-    if(sendto(sock, response, response_len, 0,
+    /* reply response to DISCO_PORT */
+    nc_udp_send(inet_ntoa(sock_remote_addr.sin_addr), DISCO_PORT,
+		DCMD_PROBE_RESPONSE_CODE, 0);
+    
+    /* reply ack to sock */
+    if(sendto(sock, DCMD_PROBE_ACK_CODE, DCMD_CODE_LEN, 0,
 	      (struct sockaddr *) &sock_remote_addr,
 	      sizeof(sock_remote_addr)) == -1)
       nc_utils_die("nc:disco:handler_request:sendto");

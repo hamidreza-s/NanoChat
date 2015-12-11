@@ -39,6 +39,7 @@
 #define OCMD_MAX 10
 
 /* discovery */
+#define DCMD_BUF 32
 #define DCMD_LEN 8
 #define DCMD_CODE_LEN 2
 #define DCMD_PROBE_ACK_CODE "00"

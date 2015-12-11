@@ -21,7 +21,7 @@
 
 #define DISCO_PORT "1881" /* not changable */
 #define DEFAULT_RPC_PORT "1991"
-#define INIT_OTOC_PORT 1991
+#define INIT_OTOC_PORT 1992
 
 #define HOST_MAX 20
 #define URL_MAX 30

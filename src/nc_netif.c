@@ -16,6 +16,7 @@ nc_netif_get_addrs(char *inet, char *broadcast)
       bc = (struct sockaddr_in *) ifa->ifa_broadaddr; /* ifa->ifa_dstaddr; */ 
       
       if((strncmp(ifa->ifa_name, "en0", 3) == 0) ||
+	 (strncmp(ifa->ifa_name, "em0", 3) == 0) ||
 	 (strncmp(ifa->ifa_name, "eth0", 4) == 0)) {
 	
 	strcpy(inet, inet_ntoa(sa->sin_addr));

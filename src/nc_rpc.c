@@ -6,14 +6,14 @@ nc_rpc_loop(void *void_opts)
   nc_opts *opts = (nc_opts*) void_opts;
   int sock = nn_socket(AF_SP, NN_REP);
   nn_bind(sock, opts->url);
-  nc_log_writef("info", "RPC was started on URL: %s.\n", opts->url);
+  nc_log_writef("info", "RPC was started on URL: %s.", opts->url);
   
   for(;;) {
     char *buf = NULL;
     int bytes = nn_recv(sock, &buf, NN_MSG, 0);
     int cmp_rc;
     
-    nc_log_writef("info", "Incoming RPC request: %s\n", buf);
+    nc_log_writef("info", "Incoming RPC request: %s.", buf);
 
     cmp_rc = strcmp(buf, RCMD_OTOC);
 

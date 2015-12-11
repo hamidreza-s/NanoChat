@@ -183,17 +183,25 @@ int
 func_cmd_probe(char *cmd, nc_opts *opts)
 {
   int rc;
+  int i;
   
   nc_log_writef("info", "User requested probe command.");
-  fprintf(stdout, "Starting to probing ...\n");
-
   rc = nc_disco_probe(opts);
-  if(rc < 1) {
-    fprintf(stdout, "Ops, cannot find any peer!\n");
-  } else {
-    fprintf(stdout, "Yay, found %d peers. type '/list' to see them!\n", rc);
+
+  fprintf(stdout, "Starting to probing ");
+  fflush(stdout);
+  for(i = 0; i < DCMD_PROBE_TIMEOUT_SEC; i++) {
+    sleep(1);
+    fprintf(stdout, ".");
+    fflush(stdout);
   }
+  fprintf(stdout, "\n");
+
+  if(rc > 0)
+    fprintf(stdout, "Ops, cannot send probe request!\n");
   
+  fprintf(stdout, "Done. Type '/list' to see available peers.\n");
+
   return 0;
 }
 

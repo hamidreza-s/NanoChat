@@ -59,14 +59,38 @@ nc_disco_loop(void *opts)
 int
 nc_disco_probe(nc_opts *opts)
 {
+  int sock;
+  struct sockaddr_in broadcast_addr;
+  char *broadcast_ip;
+  unsigned short broadcast_port;
+  char *send_str = DCMD_PROBE_REQUEST_CODE;
+  int broadcast_permission;
+  unsigned int send_str_len;
 
-  /* @TODO:
-     - send broadcast request to find available peers
-     - wait to receive response from peers
-     - save them somewhere
-     - return with the count of available peers
-  */
+  broadcast_ip = opts->broadcast;
+  broadcast_port = atoi(DISCO_PORT);
   
+  if((sock = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0)
+    return 1;
+
+  broadcast_permission = 1;
+  if(setsockopt(sock, SOL_SOCKET, SO_BROADCAST,
+		(void *) &broadcast_permission,
+		sizeof(broadcast_permission)) < 0)
+    return 2;
+
+  memset(&broadcast_addr, 0, sizeof(broadcast_addr));
+  broadcast_addr.sin_family = AF_INET;
+  broadcast_addr.sin_addr.s_addr = inet_addr(broadcast_ip);
+  broadcast_addr.sin_port = htons(broadcast_port);
+
+  send_str_len = strlen(send_str);
+
+  if(sendto(sock, send_str, send_str_len, 0,
+	    (struct sockaddr *) &broadcast_addr,
+	    sizeof(broadcast_addr)) != send_str_len)
+    return 3;
+
   return 0;
 }
 
@@ -83,28 +107,36 @@ handle_request(int sock, struct sockaddr_in sock_remote_addr,
 	       nc_opts *nc_opts)
 {
   char *body_payload;
+  int response_len = DCMD_CODE_LEN + PORT_MAX;
+  char response[response_len];
   
-  if(strncmp(body, DCMD_PROB_REQUEST_CODE, DCMD_CODE_LEN) == 0) {
+  if(strncmp(body, DCMD_PROBE_REQUEST_CODE, DCMD_CODE_LEN) == 0) {
 
     /* request */
     /* send RPC port as response */
     body_payload = body + DCMD_CODE_LEN;
+    strcpy(response, DCMD_PROBE_RESPONSE_CODE);
+    strcat(response, nc_opts->port);
     nc_log_writef("info", "Incoming discovery (UDP) request. code: %s, body: %s",
-		  DCMD_PROB_REQUEST_CODE, body_payload);
+		  DCMD_PROBE_REQUEST_CODE, body_payload);
 
-    if(sendto(sock, nc_opts->port, PORT_MAX, 0,
+    if(sendto(sock, response, response_len, 0,
 	      (struct sockaddr *) &sock_remote_addr,
 	      sizeof(sock_remote_addr)) == -1)
       nc_utils_die("nc:disco:handler_request:sendto");
     
-  } else if(strncmp(body, DCMD_PROB_RESPONSE_CODE, DCMD_CODE_LEN) == 0) {
+  } else if(strncmp(body, DCMD_PROBE_RESPONSE_CODE, DCMD_CODE_LEN) == 0) {
 
     /* response */
     /* receive RPC port as response */
     body_payload = body + DCMD_CODE_LEN;
     nc_log_writef("info", "Incoming discovery (UDP) response. code: %s, body: %s",
-		  DCMD_PROB_RESPONSE_CODE, body_payload);
+		  DCMD_PROBE_RESPONSE_CODE, body_payload);
 
+    /* @TODO:
+       - save them somewhere to be accessible by '/list' command
+    */
+    
   } else {
 
     /* unknown command */

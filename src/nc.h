@@ -41,8 +41,9 @@
 /* discovery */
 #define DCMD_LEN 8
 #define DCMD_CODE_LEN 2
-#define DCMD_PROB_REQUEST_CODE "01"
-#define DCMD_PROB_RESPONSE_CODE "02"
+#define DCMD_PROBE_REQUEST_CODE "01"
+#define DCMD_PROBE_RESPONSE_CODE "02"
+#define DCMD_PROBE_TIMEOUT_SEC 5 
 
 /* rpc commands */
 #define RCMD_LEN 2

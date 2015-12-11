@@ -80,7 +80,7 @@ nc_param_get_opts(nc_opts *opts, int argc, char **argv)
 
     rc = nc_netif_get_addrs(opts->host, opts->broadcast);
     if(rc != 0) {
-      fprintf(stderr, "Error: no network interface was found!");
+      fprintf(stderr, "Error: no network interface was found!\n");
       exit(0);
     }
 

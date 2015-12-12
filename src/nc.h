@@ -40,7 +40,7 @@
 #define OCMD_MAX 10
 
 /* discovery */
-#define DCMD_BUF 32
+#define DCMD_BUF 64
 #define DCMD_LEN 8
 #define DCMD_CODE_LEN 2
 #define DCMD_PROBE_ACK_CODE "00"
@@ -128,6 +128,6 @@ int nc_udp_send(char *ip, char *port, char *body, int broadcast);
 
 /* --- names --- */
 int nc_names_get_hostname(char *buf, int len);
-int nc_names_get_username(char *buf);
+int nc_names_get_username(char *buf, int len);
 
 #endif

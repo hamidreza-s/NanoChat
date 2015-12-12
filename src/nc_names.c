@@ -8,7 +8,7 @@ nc_names_get_hostname(char *buf, int len)
 }
 
 int
-nc_names_get_username(char *buf)
+nc_names_get_username(char *buf, int len)
 {
   struct passwd *pw;
   uid_t uid;

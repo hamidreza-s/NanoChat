@@ -81,15 +81,24 @@ handle_request(int sock, struct sockaddr_in sock_remote_addr,
 	       int remote_port, nc_opts *opts)
 {
   char *body_payload;
-  int response_len = DCMD_CODE_LEN + PORT_MAX + HOST_MAX + 1;
+  int response_len = DCMD_CODE_LEN+ PORT_MAX + HOST_MAX + USERNAME_MAX + HOSTNAME_MAX + 3;
   char response[response_len];
+  char username[USERNAME_MAX];
+  char hostname[HOSTNAME_MAX];
 
   if(strncmp(body, DCMD_PROBE_REQUEST_CODE, DCMD_CODE_LEN) == 0) {
-
     /* --- request --- */
+
+    nc_names_get_hostname(hostname, HOSTNAME_MAX);
+    nc_names_get_username(username, USERNAME_MAX);
+    
     /* reply response to peer's DISCO_PORT with my IP and RPC PORT */
     body_payload = body + DCMD_CODE_LEN;
     strcpy(response, DCMD_PROBE_RESPONSE_CODE);
+    strcat(response, username);
+    strcat(response, "@");
+    strcat(response, hostname);
+    strcat(response, "/");
     strcat(response, opts->host);
     strcat(response, ":");
     strcat(response, opts->port);
@@ -106,8 +115,8 @@ handle_request(int sock, struct sockaddr_in sock_remote_addr,
       nc_utils_die("nc:disco:handler_request:sendto");
     
   } else if(strncmp(body, DCMD_PROBE_RESPONSE_CODE, DCMD_CODE_LEN) == 0) {
-
     /* --- response --- */
+
     /* receive RPC port as response */
     body_payload = body + DCMD_CODE_LEN;
     nc_log_writef("info", "Incoming discovery (UDP) response. code: %s, body: %s",

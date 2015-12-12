@@ -121,7 +121,7 @@ func_cmd_attach(char *cmd, nc_opts *opts)
     printf("Error: correct format is 'attach room'.\n");
   }
 
-  nc_log_writef("info", "Attached to room code: %d\n", pair_raw_sock);
+  nc_log_writef("info", "Attached to room code: %d", pair_raw_sock);
 
   current_room_sock = pair_raw_sock;
   nc_otoc_start(pair_raw_sock);

@@ -15,9 +15,9 @@ nc_rpc_loop(void *void_opts)
     
     nc_log_writef("info", "Incoming RPC request: %s.", buf);
 
-    cmp_rc = strcmp(buf, RCMD_OTOC);
+    cmp_rc = strncmp(buf, RCMD_OTOC, RCMD_LEN);
 
-    if(cmp_rc == 0 && bytes == RCMD_LEN) {
+    if(cmp_rc == 0) {
 
       /* one to one chat */
       
@@ -30,11 +30,11 @@ nc_rpc_loop(void *void_opts)
       nc_utils_make_url(otoc_url, opts->host, otoc_port);
       nn_bind(otoc_sock, otoc_url);
 
-      nc_log_writef("info", "New oto chat was connected on URL: %s.\n", otoc_url);
+      nc_log_writef("info", "New oto chat was connected on URL: %s.", otoc_url);
       nn_send(sock, otoc_port, (int) strlen(otoc_port), 0);
 
       fprintf(stdout, 
-	      "[Notification]: Incoming one to one chat (room code %d).\n>> ",
+	      "[Notification]: Incoming one to one chat (room code %d).\n>>",
 	      otoc_sock);
       fflush(stdout);
 

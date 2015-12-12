@@ -1,6 +1,7 @@
 #include "nc.h"
 
 static FILE *log_fp;
+pthread_mutex_t log_lock;
 
 void
 nc_log_start()
@@ -8,6 +9,7 @@ nc_log_start()
   nc_conf_rec conf_rec = {"log_file"};
   nc_conf_get(&conf_rec);
   log_fp = fopen(conf_rec.val, "a");
+  pthread_mutex_init(&log_lock, NULL);
 }
 
 void
@@ -16,17 +18,21 @@ nc_log_write(const char *tag, const char *msg)
   time_t now;
   time(&now);
 
+  pthread_mutex_lock(&log_lock);
   fprintf(log_fp, "%s[%s]: %s\n", ctime(&now), tag, msg);
   fflush(log_fp);
+  pthread_mutex_unlock(&log_lock);
 }
 
 void
 nc_do_log_writef(const char *tag, const char *msgf, va_list vargs)
 {
+  pthread_mutex_lock(&log_lock);
   vfprintf(log_fp, msgf, vargs);
   fprintf(log_fp, "\n");
   fflush(log_fp);
   va_end(vargs);
+  pthread_mutex_unlock(&log_lock);
 }
 
 void

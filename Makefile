@@ -8,6 +8,7 @@ FILES =	src/nc.c \
 	src/nc_param.c \
    src/nc_netif.c \
 	src/nc_utils.c \
+   src/nc_names.c \
    src/nc_udp.c \
 	src/nc_disco.c \
 	src/nc_rpc.c \

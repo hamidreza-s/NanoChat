@@ -10,6 +10,7 @@
 #include <sys/select.h>
 #include <stdarg.h>
 #include <pthread.h>
+#include <pwd.h>
 
 #include <sys/socket.h>
 #include <arpa/inet.h>
@@ -50,6 +51,10 @@
 /* rpc commands */
 #define RCMD_LEN 2
 #define RCMD_OTOC "01"
+
+/* names */
+#define USERNAME_MAX 32
+#define HOSTNAME_MAX 32
 
 typedef struct nc_opts {
   char host[HOST_MAX];
@@ -120,5 +125,9 @@ int nc_netif_get_addrs(char *inet, char *broadcast);
 
 /* --- udp --- */
 int nc_udp_send(char *ip, char *port, char *body, int broadcast);
+
+/* --- names --- */
+int nc_names_get_hostname(char *buf, int len);
+int nc_names_get_username(char *buf);
 
 #endif

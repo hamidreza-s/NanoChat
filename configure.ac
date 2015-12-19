@@ -16,4 +16,24 @@ AC_CHECK_HEADERS([stdio.h stdlib.h unistd.h getopt.h string.h time.h \
 AC_TYPE_SIZE_T
 AC_CONFIG_FILES([Makefile lib/nanomsg/Makefile src/Makefile])
 
+AC_CANONICAL_HOST
+case "${host_os}" in
+    *linux*)
+        # Define on Linux to enable all library features
+	NC_EXTRA_LDADD=-lanl
+        ;;
+    *freebsd*)
+        # Define on FreeBSD to enable all library features
+	NC_EXTRA_LDADD=
+        ;;
+    *darwin*)
+        # Define on Darwin to enable all library features
+	NC_EXTRA_LDADD=
+        ;;
+    *)
+        AC_MSG_ERROR([unsupported system: ${host_os}.])
+        ;;
+esac
+AC_SUBST([NC_EXTRA_LDADD])
+
 AC_OUTPUT

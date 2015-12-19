@@ -8,7 +8,8 @@ clean-local:
 	rm -f $(top_srcdir)/var/nanochat.conf
 	rm -f $(top_srcdir)/var/nanochat.log
 
-AM_CFLAGS = -Wall
+AM_CFLAGS = -Wall -I$(top_srcdir)/lib/nanomsg/nanomsg-$(NANOMSG_VERSION)/include
+
 bin_PROGRAMS = nanochat
 nanochat_SOURCES = \
 	nc.h \
@@ -26,4 +27,4 @@ nanochat_SOURCES = \
 	nc_log.c
 nanochat_LDADD = $(top_srcdir)/lib/nanomsg/nanomsg-$(NANOMSG_VERSION)/lib/libnanomsg.a
 nanochat_LDADD += -lpthread
-nanochat_LDADD += -lanl
+nanochat_LDADD += $(NC_EXTRA_LDADD)

@@ -34,3 +34,5 @@ stamp-h1
 *.lo
 *.gcno
 *.gcda
+config.guess
+config.sub

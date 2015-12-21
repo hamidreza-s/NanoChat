@@ -5,6 +5,9 @@ AM_INIT_AUTOMAKE([foreign])
 NANOMSG_VERSION=0.8-beta
 AC_SUBST([NANOMSG_VERSION])
 
+VEDIS_VERSION=1.2.6
+AC_SUBST([VEDIS_VERSION])
+
 AC_PROG_CC
 AC_LANG([C])
 
@@ -14,7 +17,7 @@ AC_CHECK_HEADERS([stdio.h stdlib.h unistd.h getopt.h string.h time.h \
 			  arpa/inet.h ifaddrs.h])
 
 AC_TYPE_SIZE_T
-AC_CONFIG_FILES([Makefile lib/nanomsg/Makefile src/Makefile])
+AC_CONFIG_FILES([Makefile lib/nanomsg/Makefile lib/vedis/Makefile src/Makefile])
 
 AC_CANONICAL_HOST
 case "${host_os}" in

@@ -9,8 +9,13 @@ clean-local:
 	rm -f $(top_srcdir)/var/nanochat.log
 
 AM_CFLAGS = -Wall 
+
 AM_CFLAGS += -I$(top_srcdir)/lib/nanomsg/nanomsg-$(NANOMSG_VERSION)/include
 AM_CFLAGS += -L$(top_srcdir)/lib/nanomsg/nanomsg-$(NANOMSG_VERSION)/lib
+
+AM_CFLAGS += -I$(top_srcdir)/lib/vedis/vedis-$(VEDIS_VERSION)/include
+AM_CFLAGS += -L$(top_srcdir)/lib/vedis/vedis-$(VEDIS_VERSION)/lib
+
 bin_PROGRAMS = nanochat
 nanochat_SOURCES = \
 	nc.h \
@@ -26,6 +31,8 @@ nanochat_SOURCES = \
 	nc_otoc.c \
 	nc_conf.c \
 	nc_log.c
-nanochat_LDADD = -lnanomsg
-nanochat_LDADD += -lpthread
+
+nanochat_LDADD = -lpthread
+nanochat_LDADD += -l:libnanomsg.a
+nanochat_LDADD += -l:libvedis.a
 nanochat_LDADD += $(NC_EXTRA_LDADD)

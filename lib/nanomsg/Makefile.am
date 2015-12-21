@@ -8,7 +8,6 @@ all-local:
 			make install; \
 	fi;
 
-
 clean-local:
 	cd ./nanomsg-$(NANOMSG_VERSION) && \
 		make clean

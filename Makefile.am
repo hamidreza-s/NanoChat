@@ -1,4 +1,4 @@
-SUBDIRS = lib/nanomsg src
+SUBDIRS = lib/nanomsg lib/vedis src
 
 install-data-hook:
 	@echo bin dir $(bindir)

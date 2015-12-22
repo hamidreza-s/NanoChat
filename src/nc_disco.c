@@ -122,9 +122,8 @@ handle_request(int sock, struct sockaddr_in sock_remote_addr,
     nc_log_writef("info", "Incoming discovery (UDP) response. code: %s, body: %s",
 		  DCMD_PROBE_RESPONSE_CODE, body_payload);
 
-    /* @TODO:
-       - save them somewhere to be accessible by '/list' command
-    */
+    /* store available peers */
+    nc_dal_set_peer(&body_payload);
     
   } else {
 

@@ -30,7 +30,8 @@ nanochat_SOURCES = \
 	nc_shell.c \
 	nc_otoc.c \
 	nc_conf.c \
-	nc_log.c
+	nc_log.c \
+	nc_dal.c
 
 nanochat_LDADD = -lpthread
 nanochat_LDADD += -l:libnanomsg.a

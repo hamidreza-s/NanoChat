@@ -48,7 +48,7 @@
 #define DCMD_PROBE_ACK_CODE "00"
 #define DCMD_PROBE_REQUEST_CODE "01"
 #define DCMD_PROBE_RESPONSE_CODE "02"
-#define DCMD_PROBE_TIMEOUT_SEC 5 
+#define DCMD_PROBE_TIMEOUT_SEC 3 
 
 /* rpc commands */
 #define RCMD_LEN 2
@@ -131,5 +131,10 @@ int nc_udp_send(char *ip, char *port, char *body, int broadcast);
 /* --- names --- */
 int nc_names_get_hostname(char *buf, int len);
 int nc_names_get_username(char *buf, int len);
+
+/* --- data access layer --- */
+void nc_dal_start(nc_opts *opts);
+int nc_dal_set_peer(char **record);
+int nc_dal_print_peers();
 
 #endif

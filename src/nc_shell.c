@@ -208,6 +208,6 @@ func_cmd_probe(char *cmd, nc_opts *opts)
 int
 func_cmd_list(char *cmd, nc_opts *opts)
 {
-  printf("it will list available peers!\n");
+  nc_dal_print_peers();
   return 0;
 }

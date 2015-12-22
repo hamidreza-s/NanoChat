@@ -8,9 +8,10 @@ main(int argc, char **argv)
   /* @NOTE: conf and log must start first respectively */
   nc_conf_start();
   nc_log_start();
-
+  
   nc_param_get_opts(&opts, argc, argv);
 
+  nc_dal_start(&opts);
   nc_disco_start(&opts);
   nc_rpc_start(&opts);
   nc_shell_start(&opts);

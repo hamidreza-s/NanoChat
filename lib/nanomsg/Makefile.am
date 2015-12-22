@@ -1,6 +1,5 @@
 all-local:
 	@if [ ! -f ./nanomsg-$(NANOMSG_VERSION)/lib/libnanomsg.a ]; then \
-		echo "installing nanomsg static library ..." \
 		tar -zxf ./nanomsg-$(NANOMSG_VERSION).tar.gz && \
 			cd ./nanomsg-$(NANOMSG_VERSION) && \
 			./configure --prefix=`pwd` && \

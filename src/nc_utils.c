@@ -7,11 +7,12 @@ nc_utils_print_help()
 	  "NanoChat help\n"
 	  "-------------\n"
 	  "Avaliable flags:\n"
-	  "    Help:       -h --help\n"
-	  "    Host:       -H --host\n"
-	  "    Port:       -P --port\n"
-	  "    Verbose:    -v --verbose\n"
-	  "    Secure:     -s --secure\n"
+	  "    Help:          -h --help\n"
+	  "    Host IP:       -H --host\n"
+	  "    Broadcast IP:  -B --broadcast\n"
+	  "    RPC Port:      -P --port\n"
+	  "    Verbose:       -v --verbose\n"
+	  "    Secure:        -s --secure\n"
 	  );
 }
 

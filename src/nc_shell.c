@@ -30,22 +30,20 @@ nc_shell_start(nc_opts *opts)
   for(;;) {
     
     char *buf = NULL;
-    size_t buf_size = 1024;
     int i;
     int found;
 
     found = 0;
-    fprintf(stdout, ">> ");
-    getline(&buf, &buf_size, stdin);
-    
+    buf = readline(">> ");
 
-    if(buf[0] == '\n') {
+    if(buf[0] == 0) {
 
       found = 1;
 
     } else {
 
       nc_utils_del_new_line(buf);
+      add_history(buf);
       for(i = 0; i < cmd_current_code; i++) {
 	
 	if(strstr(buf, cmds[i].name)) {

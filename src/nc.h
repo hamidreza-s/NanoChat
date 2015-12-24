@@ -16,6 +16,9 @@
 #include <arpa/inet.h>
 #include <ifaddrs.h>
 
+#include <readline/readline.h>
+#include <readline/history.h>
+
 #include <nanomsg/nn.h>
 #include <nanomsg/reqrep.h>
 #include <nanomsg/pair.h>

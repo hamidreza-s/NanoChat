@@ -34,6 +34,5 @@ nanochat_SOURCES = \
 	nc_dal.c
 
 nanochat_LDADD = -lpthread
-nanochat_LDADD += -l:libnanomsg.a
-nanochat_LDADD += -l:libvedis.a
+nanochat_LDADD += $(NC_OS_SPECIFIC_LDADD)
 nanochat_LDADD += $(NC_EXTRA_LDADD)

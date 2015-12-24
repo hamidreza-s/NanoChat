@@ -23,20 +23,24 @@ AC_CANONICAL_HOST
 case "${host_os}" in
     *linux*)
         # Define on Linux to enable all library features
-	NC_EXTRA_LDADD=-lanl
+	NC_OS_SPECIFIC_LDADD="-l:libnanomsg.a -l:libvedis.a"
+	NC_EXTRA_LDADD=-lanl 
         ;;
     *freebsd*)
         # Define on FreeBSD to enable all library features
+	NC_OS_SPECIFIC_LDADD="-lnanomsg -lvedis"
 	NC_EXTRA_LDADD=
         ;;
     *darwin*)
         # Define on Darwin to enable all library features
+	NC_OS_SPECIFIC_LDADD="-lnanomsg -lvedis"
 	NC_EXTRA_LDADD=
         ;;
     *)
         AC_MSG_ERROR([unsupported system: ${host_os}.])
         ;;
 esac
+AC_SUBST([NC_OS_SPECIFIC_LDADD])
 AC_SUBST([NC_EXTRA_LDADD])
 
 AC_OUTPUT

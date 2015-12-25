@@ -123,7 +123,7 @@ handle_request(int sock, struct sockaddr_in sock_remote_addr,
 		  DCMD_PROBE_RESPONSE_CODE, body_payload);
 
     /* store available peers */
-    nc_dal_set_peer(&body_payload);
+    nc_dal_save_peer(&body_payload);
     
   } else {
 

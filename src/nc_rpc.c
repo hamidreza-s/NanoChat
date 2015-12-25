@@ -31,11 +31,11 @@ nc_rpc_loop(void *void_opts)
       nn_bind(otoc_sock, otoc_url);
 
       nc_log_writef("info", "New oto chat was connected on URL: %s.", otoc_url);
-      nn_send(sock, otoc_port, OTOC_PORT_LEN /*(int) strlen(otoc_port) */, 0);
+      nn_send(sock, otoc_port, OTOC_PORT_LEN, 0);
 
-      nc_dal_save_otoc(otoc_sock);
+      nc_dal_save_room(otoc_sock);
       
-      fprintf(stdout, "[*] You have new event.\n>>");
+      fprintf(stdout, "\r[*] You have new room. type '/list rooms'.\n>> ");
       fflush(stdout);
 
     } else {

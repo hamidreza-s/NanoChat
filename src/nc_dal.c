@@ -1,9 +1,11 @@
 #include "nc.h"
 
-#define OTOC_HASH_TABLE "otoc"
+#define ROOMS_HASH_TABLE "otoc"
 #define PEERS_HASH_TABLE "peers"
 
 static vedis *vedis_ptr;
+
+int nc_dal_print_array(char* cmd);
 
 void
 nc_dal_start(nc_opts *opts)
@@ -19,7 +21,7 @@ nc_dal_start(nc_opts *opts)
 }
 
 int
-nc_dal_save_otoc(int room_code)
+nc_dal_save_room(int room_code)
 {
   int rc;
   char time_str[NOW_STR_LEN];
@@ -27,7 +29,7 @@ nc_dal_save_otoc(int room_code)
   nc_utils_now_str(time_str);
   
   rc = vedis_exec_fmt(vedis_ptr, "HSET %s '%d' '%s'",
-		      OTOC_HASH_TABLE, room_code, time_str);
+		      ROOMS_HASH_TABLE, room_code, time_str);
 
   if(rc != VEDIS_OK) {
     nc_utils_die("nc:dal:save:otoc");
@@ -37,7 +39,7 @@ nc_dal_save_otoc(int room_code)
 }
 
 int
-nc_dal_set_peer(char **record)
+nc_dal_save_peer(char **record)
 {
   int rc;
   char time_str[NOW_STR_LEN];
@@ -57,21 +59,41 @@ nc_dal_set_peer(char **record)
 int
 nc_dal_print_peers()
 {
+  char cmd[32] = "HKEYS ";
+  strcat(cmd, PEERS_HASH_TABLE); 
+  if(nc_dal_print_array(cmd))
+    fprintf(stdout, "[-] No peers!\n");
+
+  return 0;
+}
+
+int
+nc_dal_print_rooms()
+{
+  char cmd[32] = "HKEYS ";
+  strcat(cmd, ROOMS_HASH_TABLE);
+  if(nc_dal_print_array(cmd))
+    fprintf(stdout, "[-] No rooms!\n");
+
+  return 0;
+}
+int
+nc_dal_print_array(char *cmd)
+{
   int rc;
   vedis_value *result_ptr;
 
-  rc = vedis_exec(vedis_ptr, "HKEYS peers", -1);
+  rc = vedis_exec(vedis_ptr, cmd, -1);
   if(rc != VEDIS_OK)
-    nc_utils_die("nc:dal:get:peers:execute");
+    nc_utils_die("nc:dal:print:array:execute");
 
   rc = vedis_exec_result(vedis_ptr, &result_ptr);
   if(rc != VEDIS_OK)
-    nc_utils_die("nc:dal:get:peers:result");
+    nc_utils_die("nc:dal:print:array:result");
 
   if(vedis_value_is_null(result_ptr)) {
     
-    fprintf(stdout, "[-] No peers!\n");
-    return 0;
+    return 1;
 
   } else if(vedis_value_is_array(result_ptr)) {
 

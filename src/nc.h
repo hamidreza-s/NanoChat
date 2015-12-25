@@ -138,8 +138,9 @@ int nc_names_get_username(char *buf, int len);
 
 /* --- data access layer --- */
 void nc_dal_start(nc_opts *opts);
-int nc_dal_save_otoc(int room_code);
-int nc_dal_set_peer(char **record);
+int nc_dal_save_room(int room_code);
+int nc_dal_save_peer(char **record);
 int nc_dal_print_peers();
+int nc_dal_print_rooms();
 
 #endif

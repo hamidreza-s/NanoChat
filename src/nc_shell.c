@@ -11,7 +11,6 @@ static int func_cmd_connect(char *cmd, nc_opts *opts);
 static int func_cmd_attach(char *cmd, nc_opts *opts);
 static int func_cmd_probe(char *cmd, nc_opts *opts);
 static int func_cmd_list(char *cmd, nc_opts *otps);
-static int func_cmd_events(char *cmd, nc_opts *opts);
 
 void
 nc_shell_start(nc_opts *opts)
@@ -26,7 +25,6 @@ nc_shell_start(nc_opts *opts)
   nc_shell_register_cmd("/attach", func_cmd_attach);
   nc_shell_register_cmd("/probe", func_cmd_probe);
   nc_shell_register_cmd("/list", func_cmd_list);
-  nc_shell_register_cmd("/events", func_cmd_events);
   /* --- end of shell command registration --- */
   
   for(;;) {
@@ -148,7 +146,7 @@ func_cmd_connect(char *cmd, nc_opts *opts)
   rc = sscanf(cmd, "/connect %s %s", host_req, port_req);
 
   if(rc != 2) {
-    printf("Error: correct format is 'connect host port'.\n");
+    fprintf(stdout, "Error: correct format is 'connect host port'.\n");
     return 1;
   }
 
@@ -200,7 +198,7 @@ func_cmd_probe(char *cmd, nc_opts *opts)
   if(rc > 0)
     fprintf(stdout, "Ops, cannot send probe request!\n");
   
-  fprintf(stdout, "Done. Type '/list' to see available peers.\n");
+  fprintf(stdout, "Done. Type '/list peers' to see available peers.\n");
 
   return 0;
 }
@@ -208,13 +206,24 @@ func_cmd_probe(char *cmd, nc_opts *opts)
 int
 func_cmd_list(char *cmd, nc_opts *opts)
 {
-  nc_dal_print_peers();
-  return 0;
-}
+  char list_arg[32];
+  int rc;
 
-int
-func_cmd_events(char *cmd, nc_opts *opts)
-{
-  fprintf(stdout, "It will print events.\n");
-  return 0;
+  rc = sscanf(cmd, "/list %s", list_arg);
+
+  if(rc != 1) {
+    fprintf(stdout, "Error: correct format is 'list peers / rooms'.\n");
+    return 1;
+  }
+
+  if(strcmp(list_arg, "peers") == 0) {
+    nc_dal_print_peers();
+    return 0;
+  } else if(strcmp(list_arg, "rooms") == 0) {
+    nc_dal_print_rooms();
+    return 0;
+  } else {
+    fprintf(stdout, "Error: correct format is 'list peers / rooms'.\n");
+    return 1;
+  }
 }

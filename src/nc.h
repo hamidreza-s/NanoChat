@@ -32,6 +32,7 @@
 #define HOST_MAX 20
 #define URL_MAX 30
 #define PORT_MAX 6
+#define OTOC_PORT_LEN 4
 #define NOW_STR_LEN 26
 #define CONF_KEY_LEN 1024
 #define CONF_VAL_LEN 1024

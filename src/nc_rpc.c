@@ -23,15 +23,15 @@ nc_rpc_loop(void *void_opts)
       
       char otoc_url[URL_MAX];
       static int otoc_port_init = INIT_OTOC_PORT;
-      char otoc_port[PORT_MAX];
+      char otoc_port[OTOC_PORT_LEN];
       int otoc_sock = nn_socket(AF_SP, NN_PAIR);
 
-      sprintf(otoc_port, "%d", otoc_port_init++);
+      snprintf(otoc_port, OTOC_PORT_LEN, "%d", otoc_port_init++);
       nc_utils_make_url(otoc_url, opts->host, otoc_port);
       nn_bind(otoc_sock, otoc_url);
 
       nc_log_writef("info", "New oto chat was connected on URL: %s.", otoc_url);
-      nn_send(sock, otoc_port, (int) strlen(otoc_port), 0);
+      nn_send(sock, otoc_port, OTOC_PORT_LEN /*(int) strlen(otoc_port) */, 0);
 
       nc_dal_save_otoc(otoc_sock);
       

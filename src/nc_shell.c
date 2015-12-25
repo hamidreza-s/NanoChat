@@ -163,7 +163,7 @@ func_cmd_connect(char *cmd, nc_opts *opts)
   nn_shutdown(sock_req, 0);
 
   strcpy(host_pair, host_req);
-  strcpy(port_pair, buf);
+  strncpy(port_pair, buf, OTOC_PORT_LEN);
   nn_freemsg(buf);
 
   nc_utils_make_url(url_pair, host_pair, port_pair);

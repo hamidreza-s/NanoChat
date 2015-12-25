@@ -1,5 +1,8 @@
 #include "nc.h"
 
+#define OTOC_HASH_TABLE "otoc"
+#define PEERS_HASH_TABLE "peers"
+
 static vedis *vedis_ptr;
 
 void
@@ -16,6 +19,24 @@ nc_dal_start(nc_opts *opts)
 }
 
 int
+nc_dal_save_otoc(int room_code)
+{
+  int rc;
+  char time_str[NOW_STR_LEN];
+
+  nc_utils_now_str(time_str);
+  
+  rc = vedis_exec_fmt(vedis_ptr, "HSET %s '%d' '%s'",
+		      OTOC_HASH_TABLE, room_code, time_str);
+
+  if(rc != VEDIS_OK) {
+    nc_utils_die("nc:dal:save:otoc");
+  }
+
+  return 0;
+}
+
+int
 nc_dal_set_peer(char **record)
 {
   int rc;
@@ -23,7 +44,8 @@ nc_dal_set_peer(char **record)
   
   nc_utils_now_str(time_str);
 
-  rc = vedis_exec_fmt(vedis_ptr, "HSET peers '%s' '%s'", *record, time_str);
+  rc = vedis_exec_fmt(vedis_ptr, "HSET %s '%s' '%s'",
+		      PEERS_HASH_TABLE, *record, time_str);
 
   if(rc != VEDIS_OK) {
     nc_utils_die("nc:dal:set:peer");

@@ -33,9 +33,9 @@ nc_rpc_loop(void *void_opts)
       nc_log_writef("info", "New oto chat was connected on URL: %s.", otoc_url);
       nn_send(sock, otoc_port, (int) strlen(otoc_port), 0);
 
-      fprintf(stdout, 
-	      "[Notification]: Incoming one to one chat (room code %d).\n>>",
-	      otoc_sock);
+      nc_dal_save_otoc(otoc_sock);
+      
+      fprintf(stdout, "[*] You have new event.\n>>");
       fflush(stdout);
 
     } else {

@@ -11,6 +11,7 @@ static int func_cmd_connect(char *cmd, nc_opts *opts);
 static int func_cmd_attach(char *cmd, nc_opts *opts);
 static int func_cmd_probe(char *cmd, nc_opts *opts);
 static int func_cmd_list(char *cmd, nc_opts *otps);
+static int func_cmd_events(char *cmd, nc_opts *opts);
 
 void
 nc_shell_start(nc_opts *opts)
@@ -25,6 +26,7 @@ nc_shell_start(nc_opts *opts)
   nc_shell_register_cmd("/attach", func_cmd_attach);
   nc_shell_register_cmd("/probe", func_cmd_probe);
   nc_shell_register_cmd("/list", func_cmd_list);
+  nc_shell_register_cmd("/events", func_cmd_events);
   /* --- end of shell command registration --- */
   
   for(;;) {
@@ -207,5 +209,12 @@ int
 func_cmd_list(char *cmd, nc_opts *opts)
 {
   nc_dal_print_peers();
+  return 0;
+}
+
+int
+func_cmd_events(char *cmd, nc_opts *opts)
+{
+  fprintf(stdout, "It will print events.\n");
   return 0;
 }

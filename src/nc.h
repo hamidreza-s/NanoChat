@@ -88,6 +88,12 @@ typedef struct nc_otoc_cmd {
   int (*func)(char *cmd);
 } nc_otoc_cmd;
 
+typedef struct nc_array {
+  char **array_ptr;
+  int array_len;
+  int string_len;
+} nc_array;
+
 /* --- parameters --- */
 void nc_param_get_opts(nc_opts *opts, int argc, char **argv);
 
@@ -142,5 +148,11 @@ int nc_dal_save_room(int room_code);
 int nc_dal_save_peer(char **record);
 int nc_dal_print_peers();
 int nc_dal_print_rooms();
+
+/* --- array --- */
+nc_array* nc_array_string_new(int array_len, int string_len);
+int nc_array_string_set(nc_array *array, int index, char *string);
+char* nc_array_string_get(nc_array *array, int index);
+int nc_array_string_len(nc_array *array);
 
 #endif

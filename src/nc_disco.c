@@ -71,6 +71,10 @@ nc_disco_probe(nc_opts *opts)
 void
 nc_disco_start(nc_opts *opts)
 {
+  nc_log_writef("info", "**** %d.\n", opts->discoverable);
+  if(!opts->discoverable)
+    return;
+  
   pthread_t disco_loop;
   pthread_create(&disco_loop, NULL, nc_disco_loop, opts);
 }

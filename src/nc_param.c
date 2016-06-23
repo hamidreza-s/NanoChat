@@ -12,12 +12,14 @@ nc_param_get_opts(nc_opts *opts, int argc, char **argv)
   opts->url[0] = '\0';
   opts->verbose = 0;
   opts->secure = 0;
+  opts->discoverable = 0;
   
   for(;;) {
     
     static struct option long_options[] = {
       {"verbose", no_argument, 0, 'v'},
       {"secure", no_argument, 0, 's'},
+      {"discoverable", no_argument, 0, 'd'},
       {"help", no_argument, 0, 'h'},
       {"host", required_argument, 0, 'H'},
       {"broadcast", required_argument, 0, 'B'},
@@ -27,7 +29,7 @@ nc_param_get_opts(nc_opts *opts, int argc, char **argv)
 
     int option_index = 0;
 
-    c = getopt_long(argc, argv, "vshH:P:", long_options, &option_index);
+    c = getopt_long(argc, argv, "vsdhH:P:", long_options, &option_index);
 
     if(c == -1 || c == 0)
       break;
@@ -42,6 +44,10 @@ nc_param_get_opts(nc_opts *opts, int argc, char **argv)
       opts->secure = 1;
       break;
 
+    case 'd':
+      opts->discoverable = 1;
+      break;
+      
     case 'h':
       nc_utils_print_help();
       exit(0);

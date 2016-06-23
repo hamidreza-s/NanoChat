@@ -8,11 +8,12 @@ nc_utils_print_help()
 	  "-------------\n"
 	  "Avaliable flags:\n"
 	  "    Help:          -h --help\n"
-	  "    Host IP:       -H --host\n"
-	  "    Broadcast IP:  -B --broadcast\n"
-	  "    RPC Port:      -P --port\n"
+	  "    Host IP:       -H --host {host IP}\n"
+	  "    Broadcast IP:  -B --broadcast {broadcast IP}\n"
+	  "    RPC Port:      -P --port {port}\n"
 	  "    Verbose:       -v --verbose\n"
 	  "    Secure:        -s --secure\n"
+	  "    Discoverable:  -d --discoverable\n"
 	  );
 }
 

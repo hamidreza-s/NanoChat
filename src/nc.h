@@ -69,6 +69,7 @@ typedef struct nc_opts {
   char url[URL_MAX];
   int secure;
   int verbose;
+  int discoverable;
 } nc_opts;
 
 typedef struct nc_conf_rec {

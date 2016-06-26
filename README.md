@@ -10,7 +10,8 @@ It can be compiled and works on both **Linux** and **OSX** system platforms.
 How to use
 -----
 
-Call `nanochat` with desired arguments. In order to see the list of available arguments, use `--help` argument as follows:
+Call `nanochat` with desired flags. In order to see the list of available flags,
+use `--help` as follows:
 
 ```
 NanoChat help
@@ -23,22 +24,40 @@ Avaliable flags:
     Discoverable:  -d --discoverable
 ```
 
-In order to see available command inside NanoChat use `/help` command as follows:
+- `--host {host IP}` flag is used to specify the network interface IP which you want to use. By default
+it is selected by NanoChat.
+- `--broadcast {broadcast IP}` flag is used to specify the network interface broadcast IP
+which you want to use. By default it is selected by NanoChat.
+- `--port` flag is used to specify the RPC port which is listening to answer chat requests after creating
+the requested chat room. Its default value is `1991`.
+- `--discoverable` flas is used to let NanoChat to be disovered by other peers, otherwise it doesn't
+answer to discovery packet and remains hidden from others.
+
+-----
+
+In order to see available commands inside NanoChat use `/help` command as follows:
 
 ```shell
 $ nanochat --discoverable
 NanoChat shell was started.
 >> /help
 Available commands:
-  /help                prints this text
-  /ping                prints pong
-  /quit                quit nanochat console
-  /connect host port   connect to remote client
-  /attach room         attach to room
-  /probe               find available peers
-  /list                list available peers
+  /help                    prints this text
+  /probe                   find online peers
+  /list peers              list online peers
+  /list rooms              list availabe rooms
+  /connect {host} {port}   connect to remote client
+  /attach {room}           attach to room
+  /quit                    quit nanochat console
 >> ...
 ```
+
+- `/probe` command discovers the subnet for other online NanoChat peers.
+- `/list peers` command list discovered online peers' host and port address.
+- `/list rooms` command list available rooms.
+- `/connect {host} {port}` command connects you to other peers.
+- `/attach {room}` command is used to enter to a created room by other peers.
+- `/quit` command closes the NanoChat console.
 
 Installation
 -----
@@ -71,7 +90,7 @@ Now `nanochat` executable file is accessible in the path of your shell.
 How it works
 -----
 
-My main purpose for writing NanoChat is learning things, So I think it is
+My main purpose for writing NanoChat is learning things, so I think it is
 good to know for you how it works and what tools and protocols it uses.
 
 - For discovering other online peers in the same subnet it uses raw UDP broadcasting.

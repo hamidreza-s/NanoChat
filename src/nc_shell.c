@@ -81,13 +81,13 @@ int
 func_cmd_help(char *cmd, nc_opts *otps)
 {
   printf("Available commands:\n"
-	 "  /help                prints this text\n"
-	 "  /ping                prints pong\n"
-	 "  /quit                quit nanochat console\n"
-	 "  /connect host port   connect to remote client\n"
-	 "  /attach room         attach to room\n"
-	 "  /probe               find available peers\n"
-	 "  /list                list available peers\n"
+	 "  /help                    prints this text\n"
+	 "  /probe                   find online peers\n"
+	 "  /list peers              list online peers\n"
+	 "  /list rooms              list availabe rooms\n"
+	 "  /connect {host} {port}   connect to remote client\n"
+	 "  /attach {room}           attach to room\n"
+	 "  /quit                    quit nanochat console\n"
 	 );
 
   return 0;

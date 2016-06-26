@@ -2,7 +2,7 @@ NanoChat
 =====
 
 NanoChat is a peer to peer chat application that can be used inside command line. It is totally server-less
-and every NanoChat peer can discover other peers in the same subnet without having the network address
+and every peer can discover other peers in the same subnet without having the network address
 of them in advance.
 
 It can be compiled and works on both **Linux** and **OSX** system platforms.
@@ -66,19 +66,20 @@ $ make && make install
 =============================================================
 ```
 
-Now `nanochat` executable file is accessible shell path.
+Now `nanochat` executable file is accessible in the path of your shell.
 
 How it works
 -----
 
-It is good to know how NanoChat works and what tools and protocols it uses.
+My main purpose for writing NanoChat is learning things, So I think it is
+good to know for you how it works and what tools and protocols it uses.
 
-- For dicovering other online peers in the same subnet it uses raw UDP brodcasting.
+- For discovering other online peers in the same subnet it uses raw UDP broadcasting.
 - For inter-node communication it uses some [nanomsg library](http://nanomsg.org) scalibility protocols,
 for instance REQREP protocol for RPC and PAIR for one to one chat.
 - For user's input/output multiplexing it uses [select](https://en.wikipedia.org/wiki/Select_(Unix))
 POSIX-compliant syscall.
-- For saving user's information it uses [Vedis](https://vedis.symisc.net) embedded datastore engine.
+- For storing user's information it uses [Vedis](https://vedis.symisc.net) embedded datastore engine.
 - For line-editing and history capabilities of commands it
 uses [GNU Readline](https://en.wikipedia.org/wiki/GNU_Readline).
 

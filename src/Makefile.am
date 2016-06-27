@@ -16,6 +16,9 @@ AM_CFLAGS += -L$(top_srcdir)/lib/nanomsg/nanomsg-$(NANOMSG_VERSION)/lib
 AM_CFLAGS += -I$(top_srcdir)/lib/vedis/vedis-$(VEDIS_VERSION)/include
 AM_CFLAGS += -L$(top_srcdir)/lib/vedis/vedis-$(VEDIS_VERSION)/lib
 
+AM_CFLAGS += -I$(top_srcdir)/lib/sodium/libsodium-$(SODIUM_VERSION)/include
+AM_CFLAGS += -L$(top_srcdir)/lib/sodium/libsodium-$(SODIUM_VERSION)/lib
+
 bin_PROGRAMS = nanochat
 nanochat_SOURCES = \
 	nc.h \
@@ -32,7 +35,8 @@ nanochat_SOURCES = \
 	nc_conf.c \
 	nc_log.c \
 	nc_dal.c \
-	nc_array.c
+	nc_array.c \
+	nc_crypto.c
 
 nanochat_LDADD = -lpthread -lreadline
 nanochat_LDADD += $(NC_OS_SPECIFIC_LDADD)

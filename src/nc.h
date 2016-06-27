@@ -25,6 +25,8 @@
 
 #include <vedis.h>
 
+#include <sodium.h>
+
 #define DISCO_PORT "1881" /* not changable */
 #define DEFAULT_RPC_PORT "1991"
 #define INIT_OTOC_PORT 1992

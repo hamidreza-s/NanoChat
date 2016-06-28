@@ -82,14 +82,27 @@ nc_param_get_opts(nc_opts *opts, int argc, char **argv)
     }
   }
 
-  if(opts->host[0] == '\0' || opts->broadcast[0] == '\0') {
+  if(!opts->discoverable) {
+    if(opts->host[0] == '\0') {
 
-    rc = nc_netif_get_addrs(opts->host, opts->broadcast);
-    if(rc != 0) {
-      fprintf(stderr, "Error: no network interface was found!\n");
-      exit(0);
+      rc = nc_netif_get_addrs(opts->host, opts->broadcast);
+      if(rc != 0) {
+	fprintf(stderr, "Error: no network interface was found!\n");
+	exit(0);
+      }
+      
     }
 
+  } else {
+
+    if(opts->host[0] == '\0' || opts->broadcast[0] == '\0') {
+      
+      rc = nc_netif_get_addrs(opts->host, opts->broadcast);
+      if(rc != 0) {
+	fprintf(stderr, "Error: no network interface was found!\n");
+	exit(0);
+      }
+    }
   }
 
   if(opts->port[0] == '\0') {

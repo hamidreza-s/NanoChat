@@ -6,7 +6,7 @@ nc_rpc_loop(void *void_opts)
   nc_opts *opts = (nc_opts*) void_opts;
   int sock = nn_socket(AF_SP, NN_REP);
   nn_bind(sock, opts->url);
-  nc_log_writef("info", "RPC was started on URL: %s.", opts->url);
+  nc_log_writef("info", "RPC has been started on URL: %s.", opts->url);
   
   for(;;) {
     char *buf = NULL;
@@ -15,9 +15,7 @@ nc_rpc_loop(void *void_opts)
     
     nc_log_writef("info", "Incoming RPC request: %s.", buf);
 
-    cmp_rc = strncmp(buf, RCMD_OTOC, RCMD_LEN);
-
-    if(cmp_rc == 0) {
+    if(strncmp(buf, RCMD_OTOC, RCMD_LEN) == 0) {
 
       /* one to one chat */
       

@@ -3,11 +3,15 @@
 static nc_otoc_cmd cmds[OCMD_MAX];
 static int cmd_current_code = 0;
 
+unsigned char my_publickey[crypto_box_PUBLICKEYBYTES];
+unsigned char my_secretkey[crypto_box_SECRETKEYBYTES];
+unsigned char peer_publickey[ROOMS_LIMIT][crypto_box_PUBLICKEYBYTES];
+
 static int func_cmd_help(char *cmd);
 static int func_cmd_leave(char *cmd);
 
 void
-nc_otoc_start(int pair_raw_sock)
+nc_otoc_start(nc_opts *opts, int pair_raw_sock)
 {
   int shell_fd_sock;
   int pair_fd_sock;
@@ -22,7 +26,16 @@ nc_otoc_start(int pair_raw_sock)
   pair_fd_sock = nc_utils_get_rec_sockfd(pair_raw_sock);
   maxfds = pair_fd_sock + 1;
 
-  /* --- start o fshel command registration --- */
+  /* --- start of exchange public key --- */
+  if(opts->secure) {
+    crypto_box_keypair(my_publickey, my_secretkey);
+
+    /* @TODO: implement it */
+    
+  }
+  /* --- end of exchange public key --- */
+  
+  /* --- start of shel command registration --- */
   nc_otoc_register_cmd("/help", func_cmd_help);
   nc_otoc_register_cmd("/leave", func_cmd_leave);
   /* --- end of shell commmand registration --- */
@@ -31,7 +44,9 @@ nc_otoc_start(int pair_raw_sock)
 
     switch(last_action) {
     case init: 
-      fprintf(stdout, ">> Entering (room code %d) ...\n", pair_raw_sock);
+      fprintf(stdout,
+	      ">> Entering (room code %d) ...\n",
+	      pair_raw_sock);
       fprintf(stdout, ">>> ");
       fflush(stdout); 
       break;

@@ -14,6 +14,7 @@ main(int argc, char **argv)
   nc_dal_start(&opts);
   nc_disco_start(&opts);
   nc_rpc_start(&opts);
+  nc_crypto_start(&opts);
   nc_shell_start(&opts);
 
   return 0;

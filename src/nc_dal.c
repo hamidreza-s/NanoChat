@@ -17,7 +17,7 @@ nc_dal_start(nc_opts *opts)
     nc_utils_die("nc:dal:start:open");
   }
 
-  nc_log_writef("info", "Data Access Layer was started.");
+  nc_log_writef("info", "Data Access Layer has been started.");
 }
 
 int

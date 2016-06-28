@@ -122,7 +122,7 @@ func_cmd_attach(char *cmd, nc_opts *opts)
   nc_log_writef("info", "Attached to room code: %d", pair_raw_sock);
 
   current_room_sock = pair_raw_sock;
-  nc_otoc_start(pair_raw_sock);
+  nc_otoc_start(opts, pair_raw_sock);
 
   return 0;
 }
@@ -172,7 +172,7 @@ func_cmd_connect(char *cmd, nc_opts *opts)
   nn_connect(sock_pair, url_pair);
   
   current_room_sock = sock_pair;
-  nc_otoc_start(sock_pair);
+  nc_otoc_start(opts, sock_pair);
 
   return 0;
 }

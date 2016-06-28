@@ -12,11 +12,8 @@ nc_utils_print_help()
 	  "    Broadcast IP:  -B --broadcast {broadcast IP}\n"
 	  "    RPC Port:      -P --port {port}\n"
 	  "    Discoverable:  -d --discoverable\n"
-	  /* @TODO: implement following options:
 	  "    Verbose:       -v --verbose\n"
 	  "    Secure:        -s --secure\n"
-	  */
-
 	  );
 }
 

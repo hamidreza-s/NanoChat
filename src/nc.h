@@ -64,6 +64,13 @@
 #define USERNAME_MAX 32
 #define HOSTNAME_MAX 32
 
+/* room */
+#define ROOMS_LIMIT 16
+
+/* my keys */
+unsigned char my_publickey[crypto_box_PUBLICKEYBYTES];
+unsigned char my_secretkey[crypto_box_SECRETKEYBYTES];
+
 typedef struct nc_opts {
   char host[HOST_MAX];
   char broadcast[HOST_MAX];
@@ -128,7 +135,7 @@ void nc_shell_start(nc_opts *opts);
 void nc_shell_register_cmd(char *name, int (*func)(char *cmd, nc_opts *opts));
 
 /* --- one to one chat --- */
-void nc_otoc_start(int pair_raw_sock);
+void nc_otoc_start(nc_opts *opts, int pair_raw_sock);
 void nc_otoc_register_cmd(char *name, int (*func)(char *cmd));
 
 /* --- config --- */
@@ -157,5 +164,8 @@ nc_array* nc_array_string_new(int array_len, int string_len);
 int nc_array_string_set(nc_array *array, int index, char *string);
 char* nc_array_string_get(nc_array *array, int index);
 int nc_array_string_len(nc_array *array);
+
+/* --- crypto --- */
+void nc_crypto_start(nc_opts *opts);
 
 #endif

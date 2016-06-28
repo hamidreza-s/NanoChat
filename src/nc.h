@@ -67,9 +67,9 @@
 /* room */
 #define ROOMS_LIMIT 16
 
-/* my keys */
-unsigned char my_publickey[crypto_box_PUBLICKEYBYTES];
-unsigned char my_secretkey[crypto_box_SECRETKEYBYTES];
+/* global variablea */
+extern unsigned char my_publickey[crypto_box_PUBLICKEYBYTES];
+extern unsigned char my_secretkey[crypto_box_SECRETKEYBYTES];
 
 typedef struct nc_opts {
   char host[HOST_MAX];

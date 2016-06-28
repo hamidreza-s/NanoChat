@@ -3,10 +3,6 @@
 static nc_otoc_cmd cmds[OCMD_MAX];
 static int cmd_current_code = 0;
 
-unsigned char my_publickey[crypto_box_PUBLICKEYBYTES];
-unsigned char my_secretkey[crypto_box_SECRETKEYBYTES];
-unsigned char peer_publickey[ROOMS_LIMIT][crypto_box_PUBLICKEYBYTES];
-
 static int func_cmd_help(char *cmd);
 static int func_cmd_leave(char *cmd);
 
@@ -28,9 +24,9 @@ nc_otoc_start(nc_opts *opts, int pair_raw_sock)
 
   /* --- start of exchange public key --- */
   if(opts->secure) {
-    crypto_box_keypair(my_publickey, my_secretkey);
 
     /* @TODO: implement it */
+    nc_log_writef("info", "%s - %s", my_publickey, my_secretkey);
     
   }
   /* --- end of exchange public key --- */

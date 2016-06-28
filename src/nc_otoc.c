@@ -102,7 +102,7 @@ nc_otoc_start(nc_opts *opts, int pair_raw_sock)
 
       } else {
 
-	nn_send(pair_raw_sock, OTOC_MTYPE_TEXT, OTOC_MTYPE_LEN, 0);
+	nn_send(pair_raw_sock, OTOC_MTYPE_RTXT, OTOC_MTYPE_LEN, 0);
 	nn_send(pair_raw_sock, buf, strlen(buf), 0);
 	fprintf(stdout, "[%s] >>> %s", time_str, buf);
 	fflush(stdout);
@@ -115,6 +115,7 @@ nc_otoc_start(nc_opts *opts, int pair_raw_sock)
     } else if(FD_ISSET(pair_fd_sock, &readfds)) {
 
       /* @TODO: if both peers are not in same security mode */
+      /* @TODO: use data serializer for sendig messages over network */
       
       char *buf = NULL;
       nn_recv(pair_raw_sock, &buf, NN_MSG, 0);
@@ -129,9 +130,9 @@ nc_otoc_start(nc_opts *opts, int pair_raw_sock)
 	nn_freemsg(buf);
 	last_action = pkey_received;
 	
-      } else if(strncmp(buf, OTOC_MTYPE_TEXT, OTOC_MTYPE_LEN) == 0) {
+      } else if(strncmp(buf, OTOC_MTYPE_RTXT, OTOC_MTYPE_LEN) == 0) {
 
-	/* text messagee */
+	/* raw text messagee */
 	nn_freemsg(buf);
 	nc_utils_now_str(time_str);
 	nn_recv(pair_raw_sock, &buf, NN_MSG, 0);

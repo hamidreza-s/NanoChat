@@ -62,9 +62,11 @@
 
 /* one to one message types */
 #define OTOC_MTYPE_LEN 3
-#define OTOC_MTYPE_PKEY "01"
-#define OTOC_MTYPE_TEXT "02"
-#define OTOC_MTYPE_FILE "03"
+#define OTOC_MTYPE_PKEY "01" /* public key */
+#define OTOC_MTYPE_RTXT "02" /* raw text */
+#define OTOC_MTYPE_ETXT "03" /* encrypted text */
+#define OTOC_MTYPE_RFLE "04" /* raw file */
+#define OTOC_MTYPE_EFLE "05" /* encrypted file */
 
 /* names */
 #define USERNAME_MAX 32

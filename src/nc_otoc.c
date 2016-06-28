@@ -16,20 +16,22 @@ nc_otoc_start(nc_opts *opts, int pair_raw_sock)
   int maxfds;
   char time_str[NOW_STR_LEN];
 
-  enum {init, sent, received, none} last_action = init;
+  enum {init, none,
+	text_sent, text_received,
+	pkey_sent, pkey_received} last_action = init;
 
   shell_fd_sock = fileno(stdin);
   pair_fd_sock = nc_utils_get_rec_sockfd(pair_raw_sock);
   maxfds = pair_fd_sock + 1;
 
-  /* --- start of exchange public key --- */
+  /* --- start of sending public key --- */
   if(opts->secure) {
-
-    /* @TODO: implement it */
-    nc_log_writef("info", "%s - %s", my_publickey, my_secretkey);
-    
+    nn_send(pair_raw_sock, OTOC_MTYPE_PKEY, OTOC_MTYPE_LEN, 0);
+    nn_send(pair_raw_sock, my_publickey, crypto_box_PUBLICKEYBYTES, 0);
+    nc_log_writef("debug", "Room %d sent public key.", pair_raw_sock);
   }
-  /* --- end of exchange public key --- */
+
+  /* --- end of sending public key --- */
   
   /* --- start of shel command registration --- */
   nc_otoc_register_cmd("/help", func_cmd_help);
@@ -46,17 +48,19 @@ nc_otoc_start(nc_opts *opts, int pair_raw_sock)
       fprintf(stdout, ">>> ");
       fflush(stdout); 
       break;
-    case received: 
+    case text_received: 
       fprintf(stdout, ">>> ");
       fflush(stdout); 
       break;
-    case sent: 
+    case text_sent: 
       fprintf(stdout, ">>> "); 
       fflush(stdout); 
       break;
     case none:
       fprintf(stdout, ">>> ");
       fflush(stdout);
+      break;
+    case pkey_received:
       break;
     }
 
@@ -97,31 +101,51 @@ nc_otoc_start(nc_opts *opts, int pair_raw_sock)
 	last_action = none;
 
       } else {
-	
-	  nn_send(pair_raw_sock, buf, strlen(buf), 0);
-	  fprintf(stdout, "[%s] >>> %s", time_str, buf);
-	  fflush(stdout);
-	  nc_utils_del_new_line(buf);
-	  nc_log_writef("debug", "sent: %s", buf);
-	  nc_utils_empty_string(buf);
-	  last_action = sent;
+
+	nn_send(pair_raw_sock, OTOC_MTYPE_TEXT, OTOC_MTYPE_LEN, 0);
+	nn_send(pair_raw_sock, buf, strlen(buf), 0);
+	fprintf(stdout, "[%s] >>> %s", time_str, buf);
+	fflush(stdout);
+	nc_utils_del_new_line(buf);
+	nc_log_writef("debug", "sent: %s", buf);
+	nc_utils_empty_string(buf);
+	last_action = text_sent;
       }
       
     } else if(FD_ISSET(pair_fd_sock, &readfds)) {
 
+      /* @TODO: if both peers are not in same security mode */
+      
       char *buf = NULL;
-
-      nc_utils_now_str(time_str);
       nn_recv(pair_raw_sock, &buf, NN_MSG, 0);
-      fprintf(stdout, "\r[%s] <<< %s", time_str, buf);
-      fflush(stdout);
-      nc_utils_del_new_line(buf);
-      nc_log_writef("debug", "received: %s", buf);
-      nc_utils_empty_string(buf);
-      nn_freemsg(buf);
-      last_action = received;
-    }
+      if(strncmp(buf, OTOC_MTYPE_PKEY, OTOC_MTYPE_LEN) == 0) {
 
+	/* public key message */
+	nn_freemsg(buf);
+	nn_recv(pair_raw_sock, &buf, NN_MSG, 0);
+	strncpy(peers_publickey[pair_raw_sock], buf,
+		crypto_box_PUBLICKEYBYTES);
+	nc_log_writef("debug", "Room %d received public key.", pair_raw_sock);
+	nn_freemsg(buf);
+	last_action = pkey_received;
+	
+      } else if(strncmp(buf, OTOC_MTYPE_TEXT, OTOC_MTYPE_LEN) == 0) {
+
+	/* text messagee */
+	nn_freemsg(buf);
+	nc_utils_now_str(time_str);
+	nn_recv(pair_raw_sock, &buf, NN_MSG, 0);
+	fprintf(stdout, "\r[%s] <<< %s", time_str, buf);
+	fflush(stdout);
+	nc_utils_del_new_line(buf);
+	nc_log_writef("debug", "received: %s", buf);
+	nc_utils_empty_string(buf);
+	nn_freemsg(buf);
+	last_action = text_received;
+	
+      }
+    }
+    
   }
 
 }

@@ -2,6 +2,9 @@
 
 unsigned char my_publickey[crypto_box_PUBLICKEYBYTES];
 unsigned char my_secretkey[crypto_box_SECRETKEYBYTES];
+unsigned char peers_publickey
+              [ROOMS_LIMIT]
+              [crypto_box_PUBLICKEYBYTES];
 
 void
 nc_crypto_start(nc_opts *opts)

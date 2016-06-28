@@ -60,6 +60,12 @@
 #define RCMD_LEN 2
 #define RCMD_OTOC "01"
 
+/* one to one message types */
+#define OTOC_MTYPE_LEN 3
+#define OTOC_MTYPE_PKEY "01"
+#define OTOC_MTYPE_TEXT "02"
+#define OTOC_MTYPE_FILE "03"
+
 /* names */
 #define USERNAME_MAX 32
 #define HOSTNAME_MAX 32
@@ -70,6 +76,9 @@
 /* global variablea */
 extern unsigned char my_publickey[crypto_box_PUBLICKEYBYTES];
 extern unsigned char my_secretkey[crypto_box_SECRETKEYBYTES];
+extern unsigned char peers_publickey
+                     [ROOMS_LIMIT]
+                     [crypto_box_PUBLICKEYBYTES];
 
 typedef struct nc_opts {
   char host[HOST_MAX];

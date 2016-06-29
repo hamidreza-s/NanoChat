@@ -40,7 +40,8 @@ nanochat_SOURCES = \
 	nc_log.c \
 	nc_dal.c \
 	nc_array.c \
-	nc_crypto.c
+	nc_crypto.c \
+	nc_parser.c
 
 nanochat_LDADD = -lpthread -lreadline
 nanochat_LDADD += $(NC_OS_SPECIFIC_LDADD)

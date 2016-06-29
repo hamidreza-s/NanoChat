@@ -26,11 +26,8 @@ nc_otoc_start(nc_opts *opts, int pair_raw_sock)
 
   /* --- start of sending public key --- */
   if(opts->secure) {
-    nn_send(pair_raw_sock, OTOC_MTYPE_PKEY, OTOC_MTYPE_LEN, 0);
-    nn_send(pair_raw_sock, my_publickey, crypto_box_PUBLICKEYBYTES, 0);
-    nc_log_writef("debug", "Room %d sent public key.", pair_raw_sock);
+    /* @TODO: serialize public key and send it */
   }
-
   /* --- end of sending public key --- */
   
   /* --- start of shel command registration --- */
@@ -102,8 +99,10 @@ nc_otoc_start(nc_opts *opts, int pair_raw_sock)
 
       } else {
 
-	nn_send(pair_raw_sock, OTOC_MTYPE_RTXT, OTOC_MTYPE_LEN, 0);
-	nn_send(pair_raw_sock, buf, strlen(buf), 0);
+	char *msg = NULL;
+	char *msg_type = OTOC_MTYPE_RTXT;
+	nc_parser_make_otoc_msg(&msg_type, &buf, &msg);
+	nn_send(pair_raw_sock, msg, strlen(msg), 0);
 	fprintf(stdout, "[%s] >>> %s", time_str, buf);
 	fflush(stdout);
 	nc_utils_del_new_line(buf);
@@ -115,22 +114,21 @@ nc_otoc_start(nc_opts *opts, int pair_raw_sock)
     } else if(FD_ISSET(pair_fd_sock, &readfds)) {
 
       /* @TODO: if both peers are not in same security mode */
-      /* @TODO: use data serializer for sendig messages over network */
       
       char *buf = NULL;
+      char *msg_body = NULL;
+      char *msg_type = NULL;
+      
       nn_recv(pair_raw_sock, &buf, NN_MSG, 0);
-      if(strncmp(buf, OTOC_MTYPE_PKEY, OTOC_MTYPE_LEN) == 0) {
+      nc_parser_extract_otoc_msg(&buf, &msg_type, &msg_body);
+      
+      if(strncmp(msg_type, OTOC_MTYPE_PKEY, OTOC_MTYPE_LEN) == 0) {
 
 	/* public key message */
-	nn_freemsg(buf);
-	nn_recv(pair_raw_sock, &buf, NN_MSG, 0);
-	strncpy(peers_publickey[pair_raw_sock], buf,
-		crypto_box_PUBLICKEYBYTES);
-	nc_log_writef("debug", "Room %d received public key.", pair_raw_sock);
-	nn_freemsg(buf);
-	last_action = pkey_received;
+
+	/* @TODO: implement it */
 	
-      } else if(strncmp(buf, OTOC_MTYPE_RTXT, OTOC_MTYPE_LEN) == 0) {
+      } else if(strncmp(msg_type, OTOC_MTYPE_RTXT, OTOC_MTYPE_LEN) == 0) {
 
 	/* raw text messagee */
 	nn_freemsg(buf);

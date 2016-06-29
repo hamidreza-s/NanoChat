@@ -61,12 +61,12 @@
 #define RCMD_OTOC "01"
 
 /* one to one message types */
-#define OTOC_MTYPE_LEN 3
-#define OTOC_MTYPE_PKEY "01" /* public key */
-#define OTOC_MTYPE_RTXT "02" /* raw text */
-#define OTOC_MTYPE_ETXT "03" /* encrypted text */
-#define OTOC_MTYPE_RFLE "04" /* raw file */
-#define OTOC_MTYPE_EFLE "05" /* encrypted file */
+#define OTOC_MTYPE_LEN 8
+#define OTOC_MTYPE_PKEY "publ_key" /* public key */
+#define OTOC_MTYPE_RTXT "text_raw" /* raw text */
+#define OTOC_MTYPE_STXT "text_sec" /* encrypted text */
+#define OTOC_MTYPE_RFLE "file_raw" /* raw file */
+#define OTOC_MTYPE_SFLE "file_sec" /* encrypted file */
 
 /* names */
 #define USERNAME_MAX 32
@@ -178,5 +178,9 @@ int nc_array_string_len(nc_array *array);
 
 /* --- crypto --- */
 void nc_crypto_start(nc_opts *opts);
+
+/* --- parser --- */
+int nc_parser_make_otoc_msg(char **type, char **body, char **msg);
+int nc_parser_extract_otoc_msg(char **msg, char **type, char **body);
 
 #endif

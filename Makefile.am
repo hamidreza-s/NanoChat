@@ -1,4 +1,4 @@
-SUBDIRS = lib/nanomsg lib/vedis lib/sodium src
+SUBDIRS = lib/nanomsg lib/vedis lib/sodium lib/parson src
 
 install-data-hook:
 	@echo bin dir $(bindir)

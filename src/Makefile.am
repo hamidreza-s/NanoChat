@@ -19,6 +19,10 @@ AM_CFLAGS += -L$(top_srcdir)/lib/vedis/vedis-$(VEDIS_VERSION)/lib
 AM_CFLAGS += -I$(top_srcdir)/lib/sodium/libsodium-$(SODIUM_VERSION)/include
 AM_CFLAGS += -L$(top_srcdir)/lib/sodium/libsodium-$(SODIUM_VERSION)/lib
 
+AM_CFLAGS += -I$(top_srcdir)/lib/parson/parson-$(PARSON_VERSION)/include
+AM_CFLAGS += -L$(top_srcdir)/lib/parson/parson-$(PARSON_VERSION)/lib
+
+
 bin_PROGRAMS = nanochat
 nanochat_SOURCES = \
 	nc.h \

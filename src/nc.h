@@ -24,8 +24,8 @@
 #include <nanomsg/pair.h>
 
 #include <vedis.h>
-
 #include <sodium.h>
+#include <parson.h>
 
 #define DISCO_PORT "1881" /* not changable */
 #define DEFAULT_RPC_PORT "1991"

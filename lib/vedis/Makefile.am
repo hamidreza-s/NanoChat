@@ -2,7 +2,7 @@ all-local:
 	@if [ ! -f ./vedis-$(VEDIS_VERSION)/lib/libvedis.a ]; then \
 		tar -zxf ./vedis-$(VEDIS_VERSION).tar.gz && \
 			cd ./vedis-$(VEDIS_VERSION)/src && \
-			gcc -c vedis.c && \
+			gcc -c vedis.c -I../include && \
 			ar -cvq libvedis.a vedis.o && \
 			cd .. && \
 			mkdir -p lib && \

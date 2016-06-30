@@ -14,6 +14,9 @@ AC_SUBST([SODIUM_VERSION])
 PARSON_VERSION=1.0.0
 AC_SUBST([PARSON_VERSION])
 
+BASE64_VERSION=1.0.0
+AC_SUBST([BASE64_VERSION])
+
 AC_PROG_CC
 AC_LANG([C])
 
@@ -27,6 +30,7 @@ AC_CONFIG_FILES([lib/nanomsg/Makefile \
                  lib/vedis/Makefile \
 		 lib/sodium/Makefile \
 		 lib/parson/Makefile \
+                 lib/base64/Makefile \
                  src/Makefile \
 		 Makefile])
 
@@ -34,17 +38,17 @@ AC_CANONICAL_HOST
 case "${host_os}" in
     *linux*)
         # Define on Linux to enable all library features
-	NC_OS_SPECIFIC_LDADD="-l:libnanomsg.a -l:libvedis.a -l:libsodium.a -l:libparson.a"
+	NC_OS_SPECIFIC_LDADD="-l:libnanomsg.a -l:libvedis.a -l:libsodium.a -l:libparson.a -l:libbase64.a"
 	NC_EXTRA_LDADD=-lanl 
         ;;
     *freebsd*)
         # Define on FreeBSD to enable all library features
-	NC_OS_SPECIFIC_LDADD="-lnanomsg -lvedis -lsodium -lparson"
+	NC_OS_SPECIFIC_LDADD="-lnanomsg -lvedis -lsodium -lparson -lbase64"
 	NC_EXTRA_LDADD=
         ;;
     *darwin*)
         # Define on Darwin to enable all library features
-	NC_OS_SPECIFIC_LDADD="-lnanomsg -lvedis -lsodium -lparson"
+	NC_OS_SPECIFIC_LDADD="-lnanomsg -lvedis -lsodium -lparson -lbase64"
 	NC_EXTRA_LDADD=
         ;;
     *)

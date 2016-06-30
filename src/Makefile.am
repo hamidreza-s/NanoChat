@@ -22,6 +22,8 @@ AM_CFLAGS += -L$(top_srcdir)/lib/sodium/libsodium-$(SODIUM_VERSION)/lib
 AM_CFLAGS += -I$(top_srcdir)/lib/parson/parson-$(PARSON_VERSION)/include
 AM_CFLAGS += -L$(top_srcdir)/lib/parson/parson-$(PARSON_VERSION)/lib
 
+AM_CFLAGS += -I$(top_srcdir)/lib/base64/base64-$(BASE64_VERSION)/include
+AM_CFLAGS += -L$(top_srcdir)/lib/base64/base64-$(BASE64_VERSION)/lib
 
 bin_PROGRAMS = nanochat
 nanochat_SOURCES = \
@@ -41,7 +43,9 @@ nanochat_SOURCES = \
 	nc_dal.c \
 	nc_array.c \
 	nc_crypto.c \
-	nc_parser.c
+	nc_json.c \
+	nc_msg.c \
+	nc_base64.c 
 
 nanochat_LDADD = -lpthread -lreadline
 nanochat_LDADD += $(NC_OS_SPECIFIC_LDADD)

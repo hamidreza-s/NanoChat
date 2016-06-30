@@ -179,8 +179,12 @@ int nc_array_string_len(nc_array *array);
 /* --- crypto --- */
 void nc_crypto_start(nc_opts *opts);
 
-/* --- parser --- */
-int nc_parser_make_otoc_msg(char **type, char **body, char **msg);
-int nc_parser_extract_otoc_msg(char **msg, char **type, char **body);
+/* --- json --- */
+int nc_json_make_otoc_msg(char **type, char **body, char **msg);
+int nc_json_extract_otoc_msg(char **msg, char **type, char **body);
+
+/* --- message --- */
+void nc_msg_encode(int head_len, int body_len, char *head, char *body, char **buf);
+void nc_msg_free(char *buf);
 
 #endif

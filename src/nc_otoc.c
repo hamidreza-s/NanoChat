@@ -26,7 +26,25 @@ nc_otoc_start(nc_opts *opts, int pair_raw_sock)
 
   /* --- start of sending public key --- */
   if(opts->secure) {
-    /* @TODO: serialize public key and send it */
+
+    char *msg = NULL;
+    char *msg_type = OTOC_MTYPE_PKEY;
+    char *msg_body = NULL;
+
+    /* --- start of encoding public key --- */
+    const char *plain_pkey = (const char*) my_publickey;
+    int plain_pkey_len = crypto_box_PUBLICKEYBYTES;
+    char encoded_pkey[Base64encode_len(plain_pkey_len)];
+    Base64encode(encoded_pkey, plain_pkey, strlen(plain_pkey));
+    nc_log_writef("debug", "encode my public key: %s", encoded_pkey);
+    /* --- end of encoding public key --- */
+
+    msg_body = encoded_pkey;
+    nc_json_make_otoc_msg(&msg_type, &msg_body, &msg);
+    nn_send(pair_raw_sock, msg, strlen(msg), 0);
+    nc_log_writef("debug", "one to one chat sent public key: %s", msg);
+    last_action = pkey_sent;
+    
   }
   /* --- end of sending public key --- */
   
@@ -38,7 +56,8 @@ nc_otoc_start(nc_opts *opts, int pair_raw_sock)
   for(;;) {
 
     switch(last_action) {
-    case init: 
+    case init:
+    case pkey_sent:
       fprintf(stdout,
 	      ">> Entering (room code %d) ...\n",
 	      pair_raw_sock);
@@ -101,12 +120,12 @@ nc_otoc_start(nc_opts *opts, int pair_raw_sock)
 
 	char *msg = NULL;
 	char *msg_type = OTOC_MTYPE_RTXT;
-	nc_parser_make_otoc_msg(&msg_type, &buf, &msg);
+	nc_json_make_otoc_msg(&msg_type, &buf, &msg);
 	nn_send(pair_raw_sock, msg, strlen(msg), 0);
 	fprintf(stdout, "[%s] >>> %s", time_str, buf);
 	fflush(stdout);
 	nc_utils_del_new_line(buf);
-	nc_log_writef("debug", "sent: %s", buf);
+	nc_log_writef("debug", "one to one chat sent: %s", buf);
 	nc_utils_empty_string(buf);
 	last_action = text_sent;
       }
@@ -120,28 +139,34 @@ nc_otoc_start(nc_opts *opts, int pair_raw_sock)
       char *msg_type = NULL;
       
       nn_recv(pair_raw_sock, &buf, NN_MSG, 0);
-      nc_parser_extract_otoc_msg(&buf, &msg_type, &msg_body);
+      nc_json_extract_otoc_msg(&buf, &msg_type, &msg_body);
+      nc_utils_del_new_line(buf);
+      nc_log_writef("debug", "one to one chat received: %s", buf);
+      nn_freemsg(buf);
       
       if(strncmp(msg_type, OTOC_MTYPE_PKEY, OTOC_MTYPE_LEN) == 0) {
 
 	/* public key message */
 
-	/* @TODO: implement it */
+	/* --- start of decoding public key --- */
+	int plain_pkey_len = Base64decode_len(msg_body);
+	char plain_pkey[plain_pkey_len];
+	Base64decode(plain_pkey, (const char*) msg_body);
+	strncpy(peers_publickey[pair_raw_sock], plain_pkey, crypto_box_PUBLICKEYBYTES);
+	nc_log_writef("debug", "decoded peer's public key was stored.");
+	/* --- end of decoding public key --- */
+	
+	last_action = pkey_received;
 	
       } else if(strncmp(msg_type, OTOC_MTYPE_RTXT, OTOC_MTYPE_LEN) == 0) {
 
 	/* raw text messagee */
-	nn_freemsg(buf);
+
 	nc_utils_now_str(time_str);
-	nn_recv(pair_raw_sock, &buf, NN_MSG, 0);
-	fprintf(stdout, "\r[%s] <<< %s", time_str, buf);
+	fprintf(stdout, "\r[%s] <<< %s", time_str, msg_body);
 	fflush(stdout);
-	nc_utils_del_new_line(buf);
-	nc_log_writef("debug", "received: %s", buf);
-	nc_utils_empty_string(buf);
-	nn_freemsg(buf);
 	last_action = text_received;
-	
+
       }
     }
     

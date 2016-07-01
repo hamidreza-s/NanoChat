@@ -44,8 +44,7 @@ nanochat_SOURCES = \
 	nc_array.c \
 	nc_crypto.c \
 	nc_json.c \
-	nc_msg.c \
-	nc_base64.c 
+	nc_msg.c
 
 nanochat_LDADD = -lpthread -lreadline
 nanochat_LDADD += $(NC_OS_SPECIFIC_LDADD)

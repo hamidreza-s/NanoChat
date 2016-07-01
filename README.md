@@ -1,7 +1,8 @@
 NanoChat
 =====
 
-NanoChat is a peer to peer chat application that can be used inside command line. It is totally server-less
+NanoChat is a **discoverable**, **peer to peer** and **end to end encrypted** chat application
+that can be used inside command line. It is totally server-less
 and every peer can discover other peers in the same subnet without having the network address
 of them in advance.
 
@@ -22,6 +23,7 @@ Avaliable flags:
     Broadcast IP:  -B --broadcast {broadcast IP}
     RPC Port:      -P --port {port}
     Discoverable:  -d --discoverable
+    Secure:        -s --secure
 ```
 
 - `--host {host IP}` flag is used to specify the network interface IP which you want to use. By default
@@ -32,6 +34,8 @@ which you want to use. By default it is selected by NanoChat.
 the requested chat room. Its default value is `1991`.
 - `--discoverable` flas is used to let NanoChat to be disovered by other peers, otherwise it doesn't
 answer to discovery packet and remains hidden from others.
+- `--secure` flags is used to make NanoChat secure for end to end message encryption with
+asymmetric/public-key cryptography.
 
 -----
 

@@ -35,12 +35,12 @@ nc_otoc_start(nc_opts *opts, int pair_raw_sock)
     const char *plain_pkey = (const char*) my_publickey;
     int plain_pkey_len = crypto_box_PUBLICKEYBYTES;
     char encoded_pkey[Base64encode_len(plain_pkey_len)];
-    Base64encode(encoded_pkey, plain_pkey, strlen(plain_pkey));
+    Base64encode(encoded_pkey, plain_pkey, plain_pkey_len);
     nc_log_writef("debug", "encode my public key: %s", encoded_pkey);
     /* --- end of encoding public key --- */
 
     msg_body = encoded_pkey;
-    nc_json_make_otoc_msg(&msg_type, &msg_body, &msg);
+    nc_json_make_otoc_msg(&msg_type, &msg_body, plain_pkey_len, &msg);
     nn_send(pair_raw_sock, msg, strlen(msg), 0);
     nc_log_writef("debug", "one to one chat sent public key: %s", msg);
     last_action = pkey_sent;
@@ -118,30 +118,72 @@ nc_otoc_start(nc_opts *opts, int pair_raw_sock)
 
       } else {
 
-	char *msg = NULL;
-	char *msg_type = OTOC_MTYPE_RTXT;
-	nc_json_make_otoc_msg(&msg_type, &buf, &msg);
-	nn_send(pair_raw_sock, msg, strlen(msg), 0);
-	fprintf(stdout, "[%s] >>> %s", time_str, buf);
-	fflush(stdout);
-	nc_utils_del_new_line(buf);
-	nc_log_writef("debug", "one to one chat sent: %s", buf);
-	nc_utils_empty_string(buf);
-	last_action = text_sent;
+	if(opts->secure) {
+
+	  /* --- make ciphermsg with key pairs --- */
+	  int ciphermsg_len = crypto_box_MACBYTES + strlen(buf);
+	  unsigned char nonce[crypto_box_NONCEBYTES];
+	  unsigned char ciphermsg[ciphermsg_len];
+
+	  /* @TODO: use random nonce */
+	  //randombytes_buf(nonce, sizeof nonce);
+	  memset(nonce, '\0', sizeof nonce);
+	  
+	  crypto_box_easy(ciphermsg, (const unsigned char*) buf,
+	  		  strlen(buf), nonce,
+	  		  peers_publickey[pair_raw_sock], my_secretkey);
+
+	  /* --- make msg encoded with base64  --- */
+	  const char *plain_ciphermsg = (const char*) ciphermsg;
+	  int plain_ciphermsg_len = ciphermsg_len;
+	  int encoded_ciphermsg_len = Base64encode_len(plain_ciphermsg_len);
+	  char encoded_ciphermsg[encoded_ciphermsg_len];
+
+	  Base64encode(encoded_ciphermsg, plain_ciphermsg, plain_ciphermsg_len);
+	  nc_log_writef("debug", "encode ciphermsg: %s", encoded_ciphermsg);
+
+	  /* --- serialize msg with json --- */
+	  char *msg = NULL;
+	  char *msg_type = OTOC_MTYPE_STXT;
+	  char *msg_body = NULL;
+
+	  msg_body = encoded_ciphermsg;
+	  nc_json_make_otoc_msg(&msg_type, &msg_body, strlen(buf), &msg);
+	  nc_log_writef("debug", "serialize encoded ciphermsg: %s", msg);
+	  
+	  /* --- send msg --- */
+	  nn_send(pair_raw_sock, msg, strlen(msg), 0);
+
+	} else {
+
+	  char *msg = NULL;
+	  char *msg_type = OTOC_MTYPE_RTXT;
+
+	  nc_json_make_otoc_msg(&msg_type, &buf, strlen(buf), &msg);
+	  nn_send(pair_raw_sock, msg, strlen(msg), 0);
+	  fprintf(stdout, "[%s] >>> %s", time_str, buf);
+	  fflush(stdout);
+	  nc_utils_del_new_line(buf);
+	  nc_log_writef("debug", "one to one chat sent: %s", buf);
+	  nc_utils_empty_string(buf);
+	  last_action = text_sent;
+
+	}
+
       }
       
     } else if(FD_ISSET(pair_fd_sock, &readfds)) {
 
-      /* @TODO: if both peers are not in same security mode */
-      
       char *buf = NULL;
       char *msg_body = NULL;
       char *msg_type = NULL;
+      int original_msg_body_len;
       
       nn_recv(pair_raw_sock, &buf, NN_MSG, 0);
-      nc_json_extract_otoc_msg(&buf, &msg_type, &msg_body);
+      nc_json_extract_otoc_msg(&buf, &msg_type, &original_msg_body_len, &msg_body);
+
       nc_utils_del_new_line(buf);
-      nc_log_writef("debug", "one to one chat received: %s", buf);
+      nc_log_writef("debug", "one to one chat received: %s", msg_type);
       nn_freemsg(buf);
       
       if(strncmp(msg_type, OTOC_MTYPE_PKEY, OTOC_MTYPE_LEN) == 0) {
@@ -151,6 +193,7 @@ nc_otoc_start(nc_opts *opts, int pair_raw_sock)
 	/* --- start of decoding public key --- */
 	int plain_pkey_len = Base64decode_len(msg_body);
 	char plain_pkey[plain_pkey_len];
+
 	Base64decode(plain_pkey, (const char*) msg_body);
 	strncpy(peers_publickey[pair_raw_sock], plain_pkey, crypto_box_PUBLICKEYBYTES);
 	nc_log_writef("debug", "decoded peer's public key was stored.");
@@ -160,13 +203,60 @@ nc_otoc_start(nc_opts *opts, int pair_raw_sock)
 	
       } else if(strncmp(msg_type, OTOC_MTYPE_RTXT, OTOC_MTYPE_LEN) == 0) {
 
-	/* raw text messagee */
+	/* raw text message */
 
 	nc_utils_now_str(time_str);
 	fprintf(stdout, "\r[%s] <<< %s", time_str, msg_body);
 	fflush(stdout);
 	last_action = text_received;
 
+      } else if(strncmp(msg_type, OTOC_MTYPE_STXT, OTOC_MTYPE_LEN) == 0) {
+
+	/* secure text message */
+
+	if(!opts->secure) {
+
+	  char *alert =
+	    "\r[%s] <<< { ... encrypted message ... }\n"
+	    "==========================================\n"
+	    "Your peer uses NanoChat undre secure mode.\n"
+	    "Use -s flag to see his encrypted messages.\n"
+	    "==========================================\n";
+
+	  nc_utils_now_str(time_str);
+	  fprintf(stdout, alert, time_str);
+	  fflush(stdout);
+	  last_action = text_received;
+
+	} else {
+
+	  /* --- decode  secure msg body --- */
+	  int plain_ciphermsg_len = Base64decode_len(msg_body);
+	  char plain_ciphermsg[plain_ciphermsg_len];
+
+	  Base64decode(plain_ciphermsg, (const char*) msg_body);
+
+	  /* --- decrypt ciphermsg --- */
+
+	  int decrypted_len = original_msg_body_len;
+	  int ciphermsg_len = crypto_box_MACBYTES + decrypted_len;
+	  unsigned char decrypted[decrypted_len];
+	  unsigned char nonce[crypto_box_NONCEBYTES];
+	  memset(nonce, '\0', sizeof nonce);
+
+	  crypto_box_open_easy(decrypted, plain_ciphermsg, ciphermsg_len, nonce,
+			       peers_publickey[pair_raw_sock], my_secretkey);
+
+	  /* --- show decrypted msg body --- */
+
+	  decrypted[original_msg_body_len] = '\0';
+	
+	  nc_utils_now_str(time_str);
+	  fprintf(stdout, "\r[%s] <<< %s", time_str, decrypted);
+	  fflush(stdout);
+	  last_action = text_received;
+
+	}
       }
     }
     

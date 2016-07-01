@@ -180,8 +180,8 @@ int nc_array_string_len(nc_array *array);
 void nc_crypto_start(nc_opts *opts);
 
 /* --- json --- */
-int nc_json_make_otoc_msg(char **type, char **body, char **msg);
-int nc_json_extract_otoc_msg(char **msg, char **type, char **body);
+int nc_json_extract_otoc_msg(char **msg, char **type, int *original_body_len, char **body);
+int nc_json_make_otoc_msg(char **type, char **body, int original_body_len, char **msg);
 
 /* --- message --- */
 void nc_msg_encode(int head_len, int body_len, char *head, char *body, char **buf);

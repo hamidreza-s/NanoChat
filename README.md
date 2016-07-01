@@ -32,9 +32,9 @@ it is selected by NanoChat.
 which you want to use. By default it is selected by NanoChat.
 - `--port` flag is used to specify the RPC port which is listening to answer chat requests after creating
 the requested chat room. Its default value is `1991`.
-- `--discoverable` flas is used to let NanoChat to be disovered by other peers, otherwise it doesn't
+- `--discoverable` flag is used to let NanoChat to be disovered by other peers, otherwise it doesn't
 answer to discovery packet and remains hidden from others.
-- `--secure` flags is used to make NanoChat secure for end to end message encryption with
+- `--secure` flag is used to make NanoChat secure for end to end message encryption with
 asymmetric/public-key cryptography.
 
 -----
@@ -71,6 +71,23 @@ your system. Also it needs [GCC](https://en.wikipedia.org/wiki/GNU_Compiler_Coll
 or [Clang](https://en.wikipedia.org/wiki/Clang),
 [GNU Make](https://www.google.co.uk/?ion=1&espv=2#q=gnu%20make) and
 [GNU Readline](https://en.wikipedia.org/wiki/GNU_Readline) library.
+Other dependencies are included in the `NanoChat/lib` directory and will be compiled and linked
+with autotools automatically. So there is no need to get and build it manually.
+
+**Debian dependencies:**
+```
+$ apt-get install gcc make automake autoconf libreadline-dev
+```
+
+**Fedora dependencies:**
+```
+$ yum install gcc make automake autoconf libreadline-devel
+```
+
+**OSX dependencies:**
+```
+$ port install gcc make automake autoconf readline
+```
 
 After making sure that your system has required dependencies, clone the repo and follow installation steps:
 
@@ -98,13 +115,16 @@ My main purpose for writing NanoChat is learning things, so I think it is
 good to know for you how it works and what tools and protocols it uses.
 
 - For discovering other online peers in the same subnet it uses raw UDP broadcasting.
-- For inter-node communication it uses some [nanomsg library](http://nanomsg.org) scalibility protocols,
+- For inter-node communication it uses some [libnanomsg](http://nanomsg.org) scalibility protocols,
 for instance REQREP protocol for RPC and PAIR for one to one chat.
 - For user's input/output multiplexing it uses [select](https://en.wikipedia.org/wiki/Select_(Unix))
 POSIX-compliant syscall.
-- For storing user's information it uses [Vedis](https://vedis.symisc.net) embedded datastore engine.
+- For storing user's information it uses [libvedis](https://vedis.symisc.net) embedded datastore engine.
 - For line-editing and history capabilities of commands it
-uses [GNU Readline](https://en.wikipedia.org/wiki/GNU_Readline).
+uses [libreadline](https://en.wikipedia.org/wiki/GNU_Readline).
+- For end to end encryption it uses [libsodium](https://github.com/jedisct1/libsodium) public-key cryptography.
+- For message serialization it uses [libparson](https://github.com/kgabis/parson) which is a JSON parser.
+- For encoding and decoding encrypted messages before sending over wire it uses base64 codec.
 
 Contribution
 -----
